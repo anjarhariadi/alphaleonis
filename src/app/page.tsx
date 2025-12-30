@@ -51,7 +51,7 @@ export default async function Home() {
   const myAccount: Account[] = [
     {
       icon: <Github />,
-      href: "https://github.com/anjarmath",
+      href: "https://github.com/anjarhariadi",
       ariaLabel: "Anjar's Github",
     },
     {
