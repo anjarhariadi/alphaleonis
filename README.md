@@ -11,7 +11,5 @@ This is my personal website built using [Next.js](https://nextjs.org), [Prisma](
 - Prisma ORM (PostgreSql via Supabase)
 - Personal dashboard.
   I can manage all my information including profile, portfolio, experience, certificate, blog post from dashboard page, so whenever i want to update some information i don't have to change the code, all protected with Supabase Auth.
-
-## Under Development Feature(s)
-
 - Blog
+  Place where i post article of my interest, i am using Notion as my backend.
