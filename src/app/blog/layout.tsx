@@ -6,7 +6,7 @@ export default function BlogLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <main>
-      <NavBar className="max-w-3xl" />
+      <NavBar />
       <div className={cn("min-h-screen w-full px-4 py-16")}>
         <div className="mx-auto w-full max-w-3xl">{children}</div>
       </div>

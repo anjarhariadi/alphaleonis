@@ -116,8 +116,8 @@ export default async function Home() {
         <div className="mx-auto flex max-w-5xl flex-col-reverse items-center gap-8 md:flex-row">
           <div className="flex flex-[3] flex-col gap-4">
             <h1 className="text-4xl font-bold">
-              <span className="text-primary">Congratulation!</span> 🙌, you have
-              come to the right place!
+              <span className="text-primary">Welcome!</span> 🙌, to my home of
+              crafting!
             </h1>
             <span className="mb-5 text-lg">
               Hello, my name is
@@ -128,7 +128,7 @@ export default async function Home() {
               href={"#contact"}
               className={cn(buttonVariants({ size: "lg" }), "w-fit")}
             >
-              Get Started
+              Let&apos;s Connect
               <MoveRight />
             </Link>
             <div className="mt-4 flex gap-6">
@@ -190,7 +190,9 @@ export default async function Home() {
           <div className="flex flex-[3] flex-col gap-2">
             <span className="text-primary text-lg font-bold">About Me</span>
             <h1 className="text-4xl font-bold">{me?.descTitle}</h1>
-            <p className="text-muted-foreground mb-3">{me?.descContent}</p>
+            <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
+              {me?.descContent}
+            </p>
             <Link
               href={`${me?.resume}`}
               target="_blank"
@@ -234,13 +236,20 @@ export default async function Home() {
           {experiences.map((experience, index) => (
             <div
               key={index}
-              className="bg-background w-full rounded-xl px-5 py-3"
+              className="bg-background w-full rounded-xl px-5 py-4"
             >
-              <h2 className="mb-2 font-bold">{experience.company}</h2>
-              <h4 className="mb-2">{experience.title}</h4>
-              <span className="text-muted-foreground text-sm font-light">
-                {experience.period}
-              </span>
+              <div className="flex flex-col gap-1">
+                <h2 className="font-bold">{experience.company}</h2>
+                <h4 className="text-muted-foreground">{experience.title}</h4>
+                <span className="text-muted-foreground text-sm font-light">
+                  {experience.period}
+                </span>
+              </div>
+              {experience.description && (
+                <p className="text-foreground mt-3 text-sm">
+                  {experience.description}
+                </p>
+              )}
             </div>
           ))}
         </div>
