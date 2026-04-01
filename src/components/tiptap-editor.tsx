@@ -1,5 +1,4 @@
 import "katex/dist/katex.min.css";
-import React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { Mathematics } from "@tiptap/extension-mathematics";
 import Placeholder from "@tiptap/extension-placeholder";

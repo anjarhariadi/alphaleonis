@@ -24,10 +24,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PortfolioBriefSheet } from "@/components/portfolio-brief-sheet";
 
 interface Tools {
   alt: string;
@@ -264,55 +264,30 @@ export default async function Home() {
           </h1>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(384px,1fr))] gap-3 py-2">
             {portfolios.map((portfolio) => (
-              <Card
-                key={portfolio.id}
-                className="hover:border-primary transition-all hover:shadow-2xl"
-              >
-                <CardHeader>
-                  <Image
-                    src={portfolio.image ?? "/no-image.webp"}
-                    alt={portfolio.title}
-                    width={500}
-                    height={500}
-                    className="aspect-video w-full rounded-md object-cover"
-                  />
-                  <CardTitle>{portfolio.title}</CardTitle>
-                  <div className="flex flex-wrap gap-2">
-                    {portfolio.tag.map((tag, index) => (
-                      <Badge key={index} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{portfolio.description}</CardDescription>
-                </CardContent>
-                <CardFooter className="gap-2">
-                  <Link
-                    href={portfolio.url ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonVariants({
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                  >
-                    <MoveRight /> Try It
-                  </Link>
-                  <Link
-                    href={portfolio.githubUrl ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonVariants({
-                      size: "sm",
-                      variant: "outline",
-                    })}
-                  >
-                    <Github /> Github
-                  </Link>
-                </CardFooter>
-              </Card>
+              <PortfolioBriefSheet key={portfolio.id} portfolio={portfolio}>
+                <Card className="hover:border-primary cursor-pointer transition-all hover:shadow-2xl">
+                  <CardHeader>
+                    <Image
+                      src={portfolio.image ?? "/no-image.webp"}
+                      alt={portfolio.title}
+                      width={500}
+                      height={500}
+                      className="aspect-video w-full rounded-md object-cover"
+                    />
+                    <CardTitle>{portfolio.title}</CardTitle>
+                    <div className="flex flex-wrap gap-2">
+                      {portfolio.tag.map((tag, index) => (
+                        <Badge key={index} variant="secondary">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{portfolio.description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </PortfolioBriefSheet>
             ))}
           </div>
         </div>

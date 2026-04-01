@@ -186,10 +186,8 @@ p.is-editor-empty:first-child::before {
   }
 }
 
-/* Pastikan file ini diimport di komponen Next.js-mu */
-
 .tiptap-content {
-  @apply text-base leading-relaxed text-gray-800;
+  @apply text-base leading-relaxed ;
 }
 
 /* Heading Styles */
