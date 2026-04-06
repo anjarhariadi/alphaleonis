@@ -27,7 +27,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PortfolioBriefSheet } from "@/components/portfolio-brief-sheet";
 
 interface Tools {
   alt: string;
@@ -264,7 +263,11 @@ export default async function Home() {
           </h1>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(384px,1fr))] gap-3 py-2">
             {portfolios.map((portfolio) => (
-              <PortfolioBriefSheet key={portfolio.id} portfolio={portfolio}>
+              <Link
+                key={portfolio.id}
+                href={`/portfolio/${portfolio.id}`}
+                prefetch
+              >
                 <Card className="hover:border-primary cursor-pointer transition-all hover:shadow-2xl">
                   <CardHeader>
                     <Image
@@ -287,7 +290,7 @@ export default async function Home() {
                     <CardDescription>{portfolio.description}</CardDescription>
                   </CardContent>
                 </Card>
-              </PortfolioBriefSheet>
+              </Link>
             ))}
           </div>
         </div>

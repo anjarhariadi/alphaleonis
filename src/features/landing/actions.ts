@@ -2,6 +2,7 @@
 
 import { db } from "@/server/db";
 import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
+import { cache } from "react";
 
 export const getProfileCached = unstable_cache(getProfile, ["profile"], {
   // revalidate: 3600,
@@ -35,6 +36,8 @@ export const getCertificatesCached = unstable_cache(
   },
 );
 
+export const getPortfolioByIdCached = cache(getPortfolioById);
+
 export const revalidateLandingPage = async () => {
   revalidateTag("profile", "max");
   revalidateTag("portfolios", "max");
@@ -65,4 +68,10 @@ export async function getExperiences() {
 
 export async function getCertificates() {
   return db.certificate.findMany();
+}
+
+export async function getPortfolioById(id: number) {
+  return db.portfolio.findUnique({
+    where: { id },
+  });
 }

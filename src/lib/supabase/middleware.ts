@@ -10,6 +10,7 @@ export async function updateSession(request: NextRequest) {
     "/blog",
     "/sitemap",
     "/robots",
+    "/portfolio",
   ];
 
   let supabaseResponse = NextResponse.next({

@@ -33,7 +33,8 @@ const sora = Sora({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  brief,
+}: Readonly<{ children: React.ReactNode; brief: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -49,6 +50,7 @@ export default function RootLayout({
         >
           <TRPCReactProvider>
             {children}
+            {brief}
             <Toaster position="top-center" richColors />
           </TRPCReactProvider>
         </ThemeProvider>
