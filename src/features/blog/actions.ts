@@ -1,28 +1,63 @@
 "use server";
 
 import { cache } from "react";
-import type { BlogPost, BlogPostContent } from "./dto";
+import type { BlogCategory, BlogPost, BlogPostContent } from "./dto";
 import { extractPageId, type NotionClientError } from "@notionhq/client";
 import { notion } from "@/lib/notion/server";
 import { extractNotionPage } from "./utils";
 import { env } from "@/env";
 
+export const getCategoriesCached = cache(getCategories);
 export const getAllPostCached = cache(getAllPost);
 export const getBlogPostCached = cache(getBlogPost);
+
+export async function getCategories() {
+  try {
+    const db = await notion.dataSources.retrieve({
+      data_source_id: env.NOTION_BLOG_DATASOURCE_ID,
+    });
+    return {
+      data: (db.properties.Categories as any).multi_select
+        .options as BlogCategory[],
+    };
+  } catch (error) {
+    return {
+      error: (error as NotionClientError).message,
+    };
+  }
+}
 
 export async function getAllPost(
   pagination: boolean,
   start_cursor: string | undefined,
+  category?: string | null,
 ) {
   try {
     const response = await notion.dataSources.query({
       data_source_id: env.NOTION_BLOG_DATASOURCE_ID,
-      filter: {
-        property: "Published",
-        checkbox: {
-          equals: true,
-        },
-      },
+      filter: category
+        ? {
+            and: [
+              {
+                property: "Published",
+                checkbox: {
+                  equals: true,
+                },
+              },
+              {
+                property: "Categories",
+                multi_select: {
+                  contains: category,
+                },
+              },
+            ],
+          }
+        : {
+            property: "Published",
+            checkbox: {
+              equals: true,
+            },
+          },
       page_size: pagination ? 10 : undefined,
       start_cursor: start_cursor,
       sorts: [

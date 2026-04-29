@@ -5,6 +5,7 @@ import { Sora } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/sonner";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
@@ -42,18 +43,20 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TRPCReactProvider>
-            {children}
-            {brief}
-            <Toaster position="top-center" richColors />
-          </TRPCReactProvider>
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <TRPCReactProvider>
+              {children}
+              {brief}
+              <Toaster position="top-center" richColors />
+            </TRPCReactProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

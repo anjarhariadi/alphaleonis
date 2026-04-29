@@ -1,11 +1,12 @@
 import { getBlogPostCached } from "@/features/blog/actions";
 import { notFound } from "next/navigation";
-import React from "react";
 import { renderBlocks } from "@/components/notion/render-blocks";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import type { Metadata, ResolvingMetadata } from "next";
 import ShareButton from "@/components/share-button";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -74,11 +75,26 @@ const BlogPostPage = async ({ params }: Props) => {
         <h1 className="text-primary text-2xl font-bold">
           {content.post?.title}
         </h1>
+        <p className="text-secondary text-sm">
+          By {content.post?.author} • {content.post?.publishedDate}
+        </p>
         <Separator />
         <div className="flex items-center justify-between gap-2">
-          <p className="text-secondary text-sm">
-            By {content.post?.author} • {content.post?.publishedDate}
-          </p>
+          <div className="flex items-center gap-2">
+            {content.post?.categories.map((tag) => (
+              <Link key={tag.name} href={`/blog?category=${tag.name}`}>
+                <Badge
+                  variant="secondary"
+                  style={{
+                    backgroundColor: tag.color,
+                  }}
+                >
+                  {tag.name}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+
           <ShareButton />
         </div>
       </div>
