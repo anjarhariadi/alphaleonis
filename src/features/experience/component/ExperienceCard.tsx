@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { api } from "@/trpc/react";
 import type { Experience } from "@prisma/client";
 import React from "react";
 import EditExperienceForm from "../form/EditExperienceForm";
@@ -23,21 +22,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const ExperienceCard = ({ experience }: { experience: Experience }) => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = React.useState(false);
-  const deleteExperience = api.experience.delete.useMutation({
-    onSuccess: () => {
-      util.experience.get.setData(undefined, (prev: Experience[] | undefined) =>
-        (prev ?? []).filter((item) => item.id !== experience.id),
-      );
-      toast.success("Experience berhasil dihapus");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  const deleteExperience = useMutation(
+    trpc.experience.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.setQueryData(
+          trpc.experience.get.queryKey(),
+          (prev: Experience[] | undefined) =>
+            (prev ?? []).filter((item) => item.id !== experience.id),
+        );
+        toast.success("Experience berhasil dihapus");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }),
+  );
   return (
     <Card>
       <CardHeader>

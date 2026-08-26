@@ -10,7 +10,6 @@ import type { Certificate } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import EditCertificateForm from "../form/EditCertificateForm";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -24,23 +23,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = React.useState(false);
-  const deleteCertificate = api.certificate.delete.useMutation({
-    onSuccess: () => {
-      util.certificate.get.setData(
-        undefined,
-        (prev: Certificate[] | undefined) =>
-          (prev ?? []).filter((item) => item.id !== certificate.id),
-      );
-      toast.success("Certificate berhasil dihapus");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  const deleteCertificate = useMutation(
+    trpc.certificate.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.setQueryData(
+          trpc.certificate.get.queryKey(),
+          (prev: Certificate[] | undefined) =>
+            (prev ?? []).filter((item) => item.id !== certificate.id),
+        );
+        toast.success("Certificate berhasil dihapus");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }),
+  );
   return (
     <Card>
       <CardHeader>

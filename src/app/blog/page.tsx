@@ -3,14 +3,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  getAllPost,
-  getCategories,
-  getCategoriesCached,
-} from "@/features/blog/actions";
+import { getAllPost, getCategoriesCached } from "@/features/blog/actions";
 import type { BlogPost } from "@/features/blog/dto";
 import { useQuery } from "@tanstack/react-query";
-import { error } from "console";
 import { Loader } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";

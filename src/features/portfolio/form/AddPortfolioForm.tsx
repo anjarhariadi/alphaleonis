@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { portfolioSchema, TAGS, type PortfolioType } from "../schema";
 import type { Portfolio } from "@prisma/client";
@@ -25,9 +24,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Check, X } from "lucide-react";
 import Image from "next/image";
 import { revalidateLandingPage } from "@/features/landing/actions";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddPortfolioForm = () => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
 
   const form = useForm<PortfolioType>({
     resolver: zodResolver(portfolioSchema),
@@ -52,22 +54,24 @@ const AddPortfolioForm = () => {
     }
   };
 
-  const addPortfolio = api.portfolio.add.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      util.portfolio.getAll.setData(
-        undefined,
-        (prev: Portfolio[] | undefined) => [...(prev ?? []), data],
-      );
-      form.reset();
+  const addPortfolio = useMutation(
+    trpc.portfolio.add.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        queryClient.setQueryData(
+          trpc.portfolio.getAll.queryKey(),
+          (prev: Portfolio[] | undefined) => [...(prev ?? []), data],
+        );
+        form.reset();
 
-      toast.success("Portfolio berhasil ditambahkan");
+        toast.success("Portfolio berhasil ditambahkan");
 
-      revalidateLandingPage();
-    },
-  });
+        revalidateLandingPage();
+      },
+    }),
+  );
 
   const handleSubmit = (data: PortfolioType) => {
     addPortfolio.mutate(data);

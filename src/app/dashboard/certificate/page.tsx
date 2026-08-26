@@ -2,12 +2,15 @@
 
 import CertificateCard from "@/features/certificate/component/CertificateCard";
 import AddCertificateForm from "@/features/certificate/form/AddCertificateForm";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import React from "react";
 
 const CertificatePage = () => {
-  const { data: certificates, isLoading } = api.certificate.get.useQuery();
+  const trpc = useTRPC();
+  const { data: certificates, isLoading } = useQuery(
+    trpc.certificate.get.queryOptions(),
+  );
   return (
     <div className="space-y-3">
       <div className="flex justify-between">

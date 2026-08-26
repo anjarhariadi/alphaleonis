@@ -1,5 +1,6 @@
 import NavBar from "@/components/navbar";
 import { cn } from "@/lib/utils";
+import { Suspense } from "react";
 
 export default function BlogLayout({
   children,
@@ -8,7 +9,9 @@ export default function BlogLayout({
     <main>
       <NavBar />
       <div className={cn("min-h-screen w-full px-4 py-16")}>
-        <div className="mx-auto w-full max-w-3xl">{children}</div>
+        <div className="mx-auto w-full max-w-3xl">
+          <Suspense fallback={"Loading..."}>{children}</Suspense>
+        </div>
       </div>
       {/* Footer */}
       <footer className="flex justify-center bg-black p-5">

@@ -6,10 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Certificate, Portfolio } from "@prisma/client";
+import type { Portfolio } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -25,23 +24,28 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 import TogglePortfolioVisibility from "../form/TogglePortfolioVisibility";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const PortfolioCard = ({ portfolio }: { portfolio: Portfolio }) => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = React.useState(false);
-  const deletePortfolio = api.portfolio.delete.useMutation({
-    onSuccess: () => {
-      util.portfolio.getAll.setData(
-        undefined,
-        (prev: Portfolio[] | undefined) =>
-          (prev ?? []).filter((item) => item.id !== portfolio.id),
-      );
-      toast.success("Portfolio berhasil dihapus");
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  const deletePortfolio = useMutation(
+    trpc.portfolio.delete.mutationOptions({
+      onSuccess: () => {
+        queryClient.setQueryData(
+          trpc.portfolio.getAll.queryKey(),
+          (prev: Portfolio[] | undefined) =>
+            (prev ?? []).filter((item) => item.id !== portfolio.id),
+        );
+        toast.success("Portfolio berhasil dihapus");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }),
+  );
   return (
     <Card>
       <CardHeader>

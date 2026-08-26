@@ -1,14 +1,18 @@
 "use client";
 import EditPortfolioForm from "@/features/portfolio/form/EditPortfolioForm";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import React, { use } from "react";
+import { use } from "react";
 
 const EditPortfolioPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = use(params);
-  const { data: portfolio, isLoading } = api.portfolio.get.useQuery({
-    id: Number(id),
-  });
+  const trpc = useTRPC();
+  const { data: portfolio, isLoading } = useQuery(
+    trpc.portfolio.get.queryOptions({
+      id: Number(id),
+    }),
+  );
   return isLoading ? (
     <Loader className="animate-spin" />
   ) : (

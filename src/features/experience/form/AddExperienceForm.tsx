@@ -21,15 +21,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { experienceSchema, type ExperienceSchematype } from "../schema";
 import { Textarea } from "@/components/ui/textarea";
 import type { Experience } from "@prisma/client";
 import { revalidateLandingPage } from "@/features/landing/actions";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddExperienceForm = () => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
 
   const form = useForm<ExperienceSchematype>({
@@ -43,21 +45,23 @@ const AddExperienceForm = () => {
     },
   });
 
-  const addExperience = api.experience.add.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      util.experience.get.setData(
-        undefined,
-        (prev: Experience[] | undefined) => [...(prev ?? []), data],
-      );
-      setOpen(false);
-      toast.success("Experience berhasil ditambahkan");
+  const addExperience = useMutation(
+    trpc.experience.add.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        queryClient.setQueryData(
+          trpc.experience.get.queryKey(),
+          (prev: Experience[] | undefined) => [...(prev ?? []), data],
+        );
+        setOpen(false);
+        toast.success("Experience berhasil ditambahkan");
 
-      revalidateLandingPage();
-    },
-  });
+        revalidateLandingPage();
+      },
+    }),
+  );
 
   const handleSubmit = (data: ExperienceSchematype) => {
     addExperience.mutate(data);

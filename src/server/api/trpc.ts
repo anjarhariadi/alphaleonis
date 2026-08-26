@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 
 import { db } from "@/server/db";
 import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 
 /**
  * 1. CONTEXT
@@ -26,7 +27,7 @@ import { createClient } from "@/lib/supabase/server";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const supabaseServerClient = await createClient();
+  const supabaseServerClient = createClient(await cookies());
 
   const { data } = await supabaseServerClient.auth.getUser();
   return {

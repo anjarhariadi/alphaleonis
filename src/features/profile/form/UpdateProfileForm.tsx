@@ -6,7 +6,6 @@ import { profileSchema, type ProfileSchemaType } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Profile } from "@prisma/client";
 import { fileToBase64 } from "@/lib/form-util";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import {
   Form,
@@ -22,12 +21,15 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import { revalidateLandingPage } from "@/features/landing/actions";
+import { useTRPC } from "@/trpc/react";
+import { useMutation } from "@tanstack/react-query";
 
 const UpdateProfileForm = ({
   defaultValues,
 }: {
   defaultValues: Partial<Profile>;
 }) => {
+  const trpc = useTRPC();
   const form = useForm<ProfileSchemaType>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -57,15 +59,17 @@ const UpdateProfileForm = ({
     }
   };
 
-  const updateProfile = api.profile.update.useMutation({
-    onSuccess: () => {
-      toast.success("Profile updated");
-      revalidateLandingPage();
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  const updateProfile = useMutation(
+    trpc.profile.update.mutationOptions({
+      onSuccess: () => {
+        toast.success("Profile updated");
+        revalidateLandingPage();
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }),
+  );
 
   const onSubmit = async (values: ProfileSchemaType) => {
     updateProfile.mutate(values);

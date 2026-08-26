@@ -1,6 +1,6 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,12 +22,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Edit } from "lucide-react";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { experienceSchema, type ExperienceSchematype } from "../schema";
 import { Textarea } from "@/components/ui/textarea";
 import type { Experience } from "@prisma/client";
 import { revalidateLandingPage } from "@/features/landing/actions";
+import { useTRPC } from "@/trpc/react";
 
 const EditExperienceForm = ({
   id,
@@ -36,7 +36,8 @@ const EditExperienceForm = ({
   id: number;
   defaultValues: Partial<Experience>;
 }) => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
 
   const form = useForm<ExperienceSchematype>({
@@ -50,23 +51,25 @@ const EditExperienceForm = ({
     },
   });
 
-  const editExperience = api.experience.edit.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      util.experience.get.setData(
-        undefined,
-        (prev: Experience[] | undefined) => [
-          ...(prev ?? []).map((item) => (item.id === data.id ? data : item)),
-        ],
-      );
-      setOpen(false);
-      toast.success("Experience berhasil diperbarui");
+  const editExperience = useMutation(
+    trpc.experience.edit.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        queryClient.setQueryData(
+          trpc.experience.get.queryKey(),
+          (prev: Experience[] | undefined) => [
+            ...(prev ?? []).map((item) => (item.id === data.id ? data : item)),
+          ],
+        );
+        setOpen(false);
+        toast.success("Experience berhasil diperbarui");
 
-      revalidateLandingPage();
-    },
-  });
+        revalidateLandingPage();
+      },
+    }),
+  );
 
   const handleSubmit = (data: ExperienceSchematype) => {
     editExperience.mutate({ data, id });

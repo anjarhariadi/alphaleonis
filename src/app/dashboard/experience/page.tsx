@@ -2,12 +2,15 @@
 
 import ExperienceCard from "@/features/experience/component/ExperienceCard";
 import AddExperienceForm from "@/features/experience/form/AddExperienceForm";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import React from "react";
 
 const ExperiencePage = () => {
-  const { data: experiences, isLoading } = api.experience.get.useQuery();
+  const trpc = useTRPC();
+  const { data: experiences, isLoading } = useQuery(
+    trpc.experience.get.queryOptions(),
+  );
   return (
     <div className="space-y-3">
       <div className="flex justify-between">

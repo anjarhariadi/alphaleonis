@@ -1,12 +1,13 @@
 "use client";
 
 import UpdateProfileForm from "@/features/profile/form/UpdateProfileForm";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
-import React from "react";
 
 const DashboardHomePage = () => {
-  const { data, isLoading } = api.profile.get.useQuery();
+  const trpc = useTRPC();
+  const { data, isLoading } = useQuery(trpc.profile.get.queryOptions());
   return (
     <div className="space-y-3">
       <h1 className="text-lg font-bold">

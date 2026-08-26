@@ -2,13 +2,16 @@
 
 import { buttonVariants } from "@/components/ui/button";
 import PortfolioCard from "@/features/portfolio/component/PortfolioCard";
-import { api } from "@/trpc/react";
+import { useTRPC } from "@/trpc/react";
+import { useQuery } from "@tanstack/react-query";
 import { Loader, Plus } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
 const PortfolioPage = () => {
-  const { data: portfolios, isLoading } = api.portfolio.getAll.useQuery();
+  const trpc = useTRPC();
+  const { data: portfolios, isLoading } = useQuery(
+    trpc.portfolio.getAll.queryOptions(),
+  );
   return (
     <div className="space-y-3">
       <div className="flex justify-between">

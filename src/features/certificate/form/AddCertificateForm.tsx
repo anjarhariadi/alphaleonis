@@ -21,15 +21,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import { addCertificateSchema, type AddCertificateSchemaType } from "../schema";
 import type { Certificate } from "@prisma/client";
 import { fileToBase64 } from "@/lib/form-util";
 import { revalidateLandingPage } from "@/features/landing/actions";
+import { useTRPC } from "@/trpc/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const AddCertificateForm = () => {
-  const util = api.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const [open, setOpen] = React.useState(false);
 
   const form = useForm<AddCertificateSchemaType>({
@@ -51,21 +53,23 @@ const AddCertificateForm = () => {
     }
   };
 
-  const addCertificate = api.certificate.add.useMutation({
-    onError: (err) => {
-      toast.error(err.message);
-    },
-    onSuccess: (data) => {
-      util.certificate.get.setData(
-        undefined,
-        (prev: Certificate[] | undefined) => [...(prev ?? []), data],
-      );
-      setOpen(false);
-      toast.success("Certificate berhasil ditambahkan");
+  const addCertificate = useMutation(
+    trpc.certificate.add.mutationOptions({
+      onError: (err) => {
+        toast.error(err.message);
+      },
+      onSuccess: (data) => {
+        queryClient.setQueryData(
+          trpc.certificate.get.queryKey(),
+          (prev: Certificate[] | undefined) => [...(prev ?? []), data],
+        );
+        setOpen(false);
+        toast.success("Certificate berhasil ditambahkan");
 
-      revalidateLandingPage();
-    },
-  });
+        revalidateLandingPage();
+      },
+    }),
+  );
 
   const handleSubmit = (data: AddCertificateSchemaType) => {
     addCertificate.mutate(data);
