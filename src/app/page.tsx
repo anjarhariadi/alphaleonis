@@ -124,7 +124,7 @@ export default async function Home() {
       <SectionContainer id="home" className="relative">
         <div className="relative z-10 flex h-full flex-col-reverse items-center gap-8 py-8 md:flex-row">
           <div className="flex flex-[4] flex-col gap-4">
-            <h1 className="text-display leading-16 font-bold">
+            <h1 className="text-display leading-normal font-bold">
               <span className="text-primary">Welcome!</span> 🙌, to my home of
               crafting!
             </h1>

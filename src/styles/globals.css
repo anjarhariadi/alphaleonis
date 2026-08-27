@@ -170,7 +170,7 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 
-  --text-display: clamp(2.5rem, 5vw, 4rem);
+  --text-display: clamp(2rem, 5vw, 4rem);
 }
 
 @layer base {
