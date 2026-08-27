@@ -163,7 +163,9 @@ export default async function Home() {
                   <h4 className="text-muted-foreground font-mono">
                     {experience.title}
                   </h4>
-                  <p>{experience.description}</p>
+                  <p className="whitespace-pre-wrap">
+                    {experience.description}
+                  </p>
                 </div>
               </div>
             );
