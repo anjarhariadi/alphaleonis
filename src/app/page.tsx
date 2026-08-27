@@ -158,7 +158,7 @@ export default async function Home() {
 
           <div className="flex-[2] p-3">
             <div className="bg-primary absolute mx-10 my-16 animate-bounce rounded-t-full rounded-l-full p-3">
-              <span className="text-5xl">{me?.mood}</span>
+              <span className="text-3xl">{me?.mood}</span>
             </div>
             <Image
               alt="my image"
@@ -273,7 +273,7 @@ export default async function Home() {
               prefetch
             >
               <Card className="hover:border-primary h-full cursor-pointer transition-all hover:shadow-2xl">
-                <CardHeader>
+                <CardHeader className="space-y-2">
                   <Image
                     src={portfolio.image ?? "/no-image.webp"}
                     alt={portfolio.title}
@@ -281,7 +281,7 @@ export default async function Home() {
                     height={500}
                     className="aspect-video w-full rounded-md object-cover"
                   />
-                  <CardTitle>{portfolio.title}</CardTitle>
+                  <CardTitle className="text-xl">{portfolio.title}</CardTitle>
                   <div className="flex flex-wrap gap-2">
                     {portfolio.tag.map((tag, index) => (
                       <Badge key={index} variant="secondary">
