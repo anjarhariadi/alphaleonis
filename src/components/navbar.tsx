@@ -48,13 +48,8 @@ const NavBar = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div className="bg-sidebar sticky top-0 z-50 border-b px-5 py-2">
-      <div
-        className={cn(
-          "mx-auto flex max-w-5xl items-center justify-between gap-4",
-          className,
-        )}
-      >
+    <div className="bg-sidebar sticky top-0 z-50 border-b px-5 py-1">
+      <div className={cn("flex items-center justify-between gap-4", className)}>
         <Link href={"/"} className="text-primary text-2xl font-bold">
           Anjar.Hariadi
         </Link>
@@ -77,7 +72,10 @@ const NavBar = ({ className }: { className?: string }) => {
           <ul className="flex flex-col gap-4 lg:flex-row">
             {menuItems.map((item) => (
               <li key={item.id}>
-                <Link href={`${item.route}`} className="hover:text-hprimary">
+                <Link
+                  href={`${item.route}`}
+                  className="hover:text-primary hover:underline"
+                >
                   {item.title}
                 </Link>
               </li>

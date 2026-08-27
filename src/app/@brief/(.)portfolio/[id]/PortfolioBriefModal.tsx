@@ -59,7 +59,7 @@ const PortfolioBriefModal = ({ portfolio }: Props) => {
               href={portfolio.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+              className={cn(buttonVariants({ size: "sm" }), "flex-1")}
             >
               <MoveRight /> Try It
             </a>

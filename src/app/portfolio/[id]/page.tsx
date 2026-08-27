@@ -82,13 +82,13 @@ export default async function PortfolioBriefPage({ params }: Props) {
       />
 
       {/* Action buttons */}
-      <div className="flex gap-4 border-t pt-6">
+      <div className="flex gap-4 pt-6">
         {portfolio.url && (
           <a
             href={portfolio.url}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(buttonVariants({ size: "lg", variant: "outline" }))}
+            className={cn(buttonVariants({ size: "lg" }), "flex-1")}
           >
             <MoveRight /> Try It
           </a>

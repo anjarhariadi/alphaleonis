@@ -72,13 +72,12 @@ const BlogPostPage = async ({ params }: Props) => {
             className="aspect-video w-full rounded-md object-cover"
           />
         )}
+        <span className="font-mono text-sm">
+          By {content.post?.author} • {content.post?.publishedDate}
+        </span>
         <h1 className="text-primary text-2xl font-bold">
           {content.post?.title}
         </h1>
-        <p className="text-secondary text-sm">
-          By {content.post?.author} • {content.post?.publishedDate}
-        </p>
-        <Separator />
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {content.post?.categories.map((tag) => (
@@ -102,7 +101,7 @@ const BlogPostPage = async ({ params }: Props) => {
       <Separator className="my-5" />
 
       {/* Content */}
-      <div className="text-sidebar-foreground w-full space-y-4 font-serif text-lg leading-7">
+      <div className="text-sidebar-foreground w-full space-y-4">
         {renderBlocks({ blocks: content.content })}
       </div>
     </>
