@@ -54,7 +54,12 @@ export default function RootLayout({
   brief,
 }: Readonly<{ children: React.ReactNode; brief: React.ReactNode }>) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className="scroll-smooth"
+      suppressHydrationWarning
+    >
       <body
         className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
       >

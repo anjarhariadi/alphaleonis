@@ -35,9 +35,7 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="scroll-smooth">
-      <NavBar />
-
+    <>
       {/* Hero Section */}
       <SectionContainer id="home" className="relative">
         <div className="relative z-10 flex h-full flex-col-reverse items-center gap-8 py-8 md:flex-row">
@@ -238,9 +236,6 @@ export default async function Home() {
           Send Me an Email <Send />
         </Link>
       </SectionContainer>
-
-      {/* Footer */}
-      <Footer />
-    </main>
+    </>
   );
 }

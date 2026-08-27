@@ -1,5 +1,6 @@
 "use client";
 
+import SectionContainer from "@/components/section-container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -69,7 +70,7 @@ const BlogListPage = () => {
   };
 
   return (
-    <>
+    <SectionContainer>
       <div className="items-center space-y-4">
         <h1 className="text-center text-4xl font-bold">Welcome to My Blog</h1>
         <p className="text-center text-lg">Here you can find my blog posts.</p>
@@ -149,7 +150,7 @@ const BlogListPage = () => {
           </div>
         )}
       </div>
-    </>
+    </SectionContainer>
   );
 };
 

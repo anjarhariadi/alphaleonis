@@ -182,12 +182,8 @@
   }
 }
 
-p {
-  @apply text-muted-foreground font-serif;
-}
-
 .tiptap-content {
-  @apply text-base leading-relaxed;
+  @apply text-lg leading-relaxed;
 }
 
 /* Heading Styles */
@@ -234,6 +230,10 @@ p {
 /* Code and preformatted text styles */
 .tiptap-content code {
   @apply bg-muted border px-2 py-1 font-mono text-sm;
+}
+
+p {
+  @apply text-muted-foreground font-serif md:text-lg;
 }
 
 .hero-bg {

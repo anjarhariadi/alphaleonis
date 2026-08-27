@@ -7,6 +7,7 @@ import type { Metadata, ResolvingMetadata } from "next";
 import ShareButton from "@/components/share-button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import SectionContainer from "@/components/section-container";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -60,7 +61,7 @@ const BlogPostPage = async ({ params }: Props) => {
       </div>
     );
   return (
-    <>
+    <SectionContainer className="max-w-4xl">
       {/* Frontmater */}
       <div className="space-y-3">
         {content.post?.cover && (
@@ -101,10 +102,10 @@ const BlogPostPage = async ({ params }: Props) => {
       <Separator className="my-5" />
 
       {/* Content */}
-      <div className="text-sidebar-foreground w-full space-y-4">
+      <div className="w-full space-y-4">
         {renderBlocks({ blocks: content.content })}
       </div>
-    </>
+    </SectionContainer>
   );
 };
 
