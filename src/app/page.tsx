@@ -118,7 +118,7 @@ export default async function Home() {
               <span className="text-primary">Welcome!</span> 🙌, to my home of
               crafting!
             </h1>
-            <span className="mb-5 text-lg">
+            <span className="mb-5 font-serif text-lg">
               Hello, my name is
               <span className="font-bold"> Anjar Dwi Hariadi</span>.
               {me?.greeting}
@@ -136,7 +136,7 @@ export default async function Home() {
                   href={account.href}
                   aria-label={account.ariaLabel}
                   key={index}
-                  className="hover:text-secondary/50 text-secondary transition-colors"
+                  className="text-muted-foreground/50 hover:text-primary transition-colors"
                 >
                   {account.icon}
                 </Link>
@@ -145,7 +145,7 @@ export default async function Home() {
           </div>
 
           <div className="flex-[2]">
-            <div className="bg-primary absolute mx-8 my-4 rounded-t-full rounded-l-full p-3">
+            <div className="bg-primary absolute mx-8 my-4 animate-bounce rounded-t-full rounded-l-full p-3">
               <span className="text-5xl">{me?.mood}</span>
             </div>
             <Image
@@ -183,11 +183,13 @@ export default async function Home() {
               src={me?.image ?? "/me.jpg"}
               width={1000}
               height={1000}
-              className="border-hprimary-dark aspect-square w-full rounded-3xl border-2 object-cover"
+              className="border-hprimary-dark aspect-square w-full border-2 object-cover p-3"
             />
           </div>
           <div className="flex flex-[3] flex-col gap-2">
-            <span className="text-primary text-lg font-bold">About Me</span>
+            <span className="text-primary font-mono text-lg font-bold">
+              About Me
+            </span>
             <h1 className="text-4xl font-bold">{me?.descTitle}</h1>
             <p className="text-muted-foreground mb-3 whitespace-pre-wrap">
               {me?.descContent}
@@ -257,7 +259,9 @@ export default async function Home() {
       {/* My portfolio */}
       <div id="portfolio" className="bg-sidebar px-5 py-8">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-5">
-          <span className="text-primary text-lg font-bold">Portfolio</span>
+          <span className="text-primary font-mono text-lg font-bold">
+            Portfolio
+          </span>
           <h1 className="text-4xl font-bold">
             Enjoying every process and here’s the results
           </h1>
@@ -287,7 +291,9 @@ export default async function Home() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription>{portfolio.description}</CardDescription>
+                    <CardDescription className="text-md font-serif">
+                      {portfolio.description}
+                    </CardDescription>
                   </CardContent>
                 </Card>
               </Link>
@@ -298,8 +304,10 @@ export default async function Home() {
 
       {/* Contact Me */}
       <div id="contact" className="px-5 py-8">
-        <div className="bg-chart-5 mx-auto flex max-w-5xl flex-col gap-3 rounded-xl p-4">
-          <span className="text-primary text-lg font-bold">Contact me</span>
+        <div className="bg-primary mx-auto flex max-w-5xl flex-col gap-3 rounded-xl p-4">
+          <span className="text-secondary font-mono text-lg font-bold">
+            Contact me
+          </span>
           <h1 className="text-2xl font-bold text-white">
             Ready to get started?
           </h1>
@@ -310,7 +318,7 @@ export default async function Home() {
             href={`mailto:${me?.email}`}
             className={cn(
               buttonVariants({ size: "lg", variant: "secondary" }),
-              "bg-primary ml-auto text-white",
+              "bg-chart-1 ml-auto text-white",
             )}
           >
             Send Me an Email <Send />

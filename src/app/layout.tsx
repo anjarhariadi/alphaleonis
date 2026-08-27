@@ -1,7 +1,11 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Sora } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  Newsreader,
+  JetBrains_Mono,
+} from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/sonner";
@@ -30,19 +34,30 @@ export const metadata: Metadata = {
   },
 };
 
-const sora = Sora({ subsets: ["latin"] });
+const fontSans = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const fontSerif = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-serif",
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export default function RootLayout({
   children,
   brief,
 }: Readonly<{ children: React.ReactNode; brief: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${sora.className} scroll-smooth`}
-      suppressHydrationWarning
-    >
-      <body>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body
+        className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
+      >
         <NuqsAdapter>
           <ThemeProvider
             attribute="class"

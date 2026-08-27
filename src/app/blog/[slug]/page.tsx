@@ -102,7 +102,7 @@ const BlogPostPage = async ({ params }: Props) => {
       <Separator className="my-5" />
 
       {/* Content */}
-      <div className="w-full space-y-4">
+      <div className="text-sidebar-foreground w-full space-y-4 font-serif text-lg leading-7">
         {renderBlocks({ blocks: content.content })}
       </div>
     </>
