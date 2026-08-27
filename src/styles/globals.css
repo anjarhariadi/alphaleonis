@@ -183,7 +183,7 @@
 }
 
 p {
-  @apply font-serif;
+  @apply text-muted-foreground font-serif;
 }
 
 .tiptap-content {

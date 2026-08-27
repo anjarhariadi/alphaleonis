@@ -1,21 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Download,
-  Github,
-  Linkedin,
-  type LucideIcon,
-  Mail,
-  MoveRight,
-  Send,
-  Youtube,
-} from "lucide-react";
+import { Download, MoveRight, Send } from "lucide-react";
 import {
   getExperiencesCached,
   getPortfoliosCached,
   getProfileCached,
 } from "@/features/landing/actions";
-import type { ReactElement } from "react";
 import NavBar from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -34,80 +24,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-interface Tools {
-  alt: string;
-  image: string;
-  ariaLabel?: string;
-}
-
-interface Account {
-  icon: ReactElement<LucideIcon>;
-  href: string;
-  ariaLabel?: string;
-}
-
-const myAccount: Account[] = [
-  {
-    icon: <Github />,
-    href: "https://github.com/anjarhariadi",
-    ariaLabel: "Anjar's Github",
-  },
-  {
-    icon: <Linkedin />,
-    href: "https://www.linkedin.com/in/anjar2hariadi/",
-    ariaLabel: "Anjar's Linkedin",
-  },
-  {
-    icon: <Mail />,
-    href: `mailto:creative.anjar@gmail.com`,
-    ariaLabel: "Anjar's Email",
-  },
-  {
-    icon: <Youtube />,
-    href: "https://www.youtube.com/@an.alphaleonis",
-    ariaLabel: "Anjar's Youtube",
-  },
-];
-
-const myTool: Tools[] = [
-  {
-    alt: "Jira",
-    image: "/mytools/jira.png",
-    ariaLabel: "Jira as project management tool",
-  },
-
-  {
-    alt: "Go Lang",
-    image: "mytools/go.svg",
-    ariaLabel: "Go Lang as coding tool",
-  },
-  {
-    alt: "React JS",
-    image: "mytools/react.svg",
-    ariaLabel: "React JS as coding tool",
-  },
-  {
-    alt: "Flutter",
-    image: "mytools/flutter.svg",
-    ariaLabel: "Flutter as coding tool",
-  },
-  {
-    alt: "Vue JS",
-    image: "mytools/vue.svg",
-    ariaLabel: "Vue JS as coding tool",
-  },
-  {
-    alt: "Figma",
-    image: "mytools/figma.svg",
-    ariaLabel: "Figma as design tool",
-  },
-  {
-    alt: "Typst",
-    image: "/mytools/typst.png",
-    ariaLabel: "Typst as document writing tool",
-  },
-];
+import { myAccount, myTool } from "@/features/landing/contents";
+import Footer from "@/components/footer";
 
 export default async function Home() {
   const [me, portfolios, experiences] = await Promise.all([
@@ -128,7 +46,7 @@ export default async function Home() {
               <span className="text-primary">Welcome!</span> 🙌, to my home of
               crafting!
             </h1>
-            <span className="mb-5 font-serif text-xl">
+            <span className="text-muted-foreground mb-5 font-serif text-xl">
               Hello, my name is
               <span className="font-bold"> Anjar Dwi Hariadi</span>.
               {me?.greeting}
@@ -203,7 +121,7 @@ export default async function Home() {
         <span className="text-primary font-mono text-lg font-bold">
           About Me
         </span>
-        <h1 className="text-4xl font-bold">{me?.descTitle}</h1>
+        <h1 className="text-3xl font-bold">{me?.descTitle}</h1>
         <p className="text-muted-foreground mb-3 text-lg whitespace-pre-wrap">
           {me?.descContent}
         </p>
@@ -215,7 +133,7 @@ export default async function Home() {
               key={index}
               className="text-muted-foreground/50 hover:text-primary transition-colors"
             >
-              {account.icon}
+              <account.icon />
             </Link>
           ))}
         </div>
@@ -262,7 +180,7 @@ export default async function Home() {
         <span className="text-primary font-mono text-lg font-bold">
           Portfolio
         </span>
-        <h1 className="text-4xl font-bold">
+        <h1 className="text-3xl font-bold">
           Enjoying every process and here’s the results
         </h1>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(384px,1fr))] gap-6 py-2">
@@ -291,7 +209,7 @@ export default async function Home() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-md font-serif text-lg">
+                  <CardDescription className="font-serif text-base md:text-lg">
                     {portfolio.description}
                   </CardDescription>
                 </CardContent>
@@ -310,9 +228,7 @@ export default async function Home() {
         <h1 className="text-primary text-2xl font-bold">
           Ready to get started?
         </h1>
-        <p className="">
-          Feel free to contact me, let’s discuss about your vision!
-        </p>
+        <p>Feel free to contact me, let’s discuss about your vision!</p>
         <Link
           href={`mailto:${me?.email}`}
           className={cn(buttonVariants({ size: "lg" }), "ml-auto")}
@@ -322,11 +238,7 @@ export default async function Home() {
       </SectionContainer>
 
       {/* Footer */}
-      <footer className="flex justify-center bg-black p-5">
-        <p className="text-white">
-          Made with ❤ by Anjar Dwi Hariadi using NextJS.
-        </p>
-      </footer>
+      <Footer />
     </main>
   );
 }

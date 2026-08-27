@@ -1,45 +1,12 @@
 "use client";
 
-import React, { useState, type Key } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { cn } from "@/lib/utils";
-
-interface MenuItem {
-  id: Key;
-  title: String;
-  route: String;
-}
-
-const menuItems: MenuItem[] = [
-  {
-    id: 1,
-    title: "Home",
-    route: "/#home",
-  },
-  {
-    id: 2,
-    title: "About Me",
-    route: "/#profile",
-  },
-  {
-    id: 3,
-    title: "Services",
-    route: "/#tools",
-  },
-  {
-    id: 4,
-    title: "Portfolio",
-    route: "/#portfolio",
-  },
-  {
-    id: 5,
-    title: "Post",
-    route: "/blog",
-  },
-];
+import { menuItems } from "@/features/landing/contents";
 
 const NavBar = ({ className }: { className?: string }) => {
   const [showDrawer, setShowDrawer] = useState(false);
