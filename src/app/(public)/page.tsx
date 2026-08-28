@@ -84,6 +84,7 @@ export default async function Home() {
               width={800}
               height={800}
               priority
+              fetchPriority="high"
               sizes="(max-width:768px) 100vw, 50vw"
               className="aspect-square border-2 object-cover p-3"
             />

@@ -4,7 +4,9 @@ import { db } from "@/server/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { cached, requestCached, CACHE_TAGS } from "@/lib/cache";
 
-export const getProfileCached = cached(getProfile, "profile");
+export const getProfileCached = cached(getProfile, "profile", {
+  revalidate: 60 * 60,
+});
 
 export const getPortfoliosCached = cached(getPortfolios, "portfolios");
 
