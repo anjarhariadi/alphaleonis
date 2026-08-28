@@ -11,6 +11,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
+import { env } from "@/env";
 
 export const metadata: Metadata = {
   title: {
@@ -53,6 +54,13 @@ export default function RootLayout({
   children,
   brief,
 }: Readonly<{ children: React.ReactNode; brief: React.ReactNode }>) {
+  const supabaseOrigin = (() => {
+    try {
+      return new URL(env.NEXT_PUBLIC_SUPABASE_URL).origin;
+    } catch {
+      return undefined;
+    }
+  })();
   return (
     <html
       lang="en"
@@ -60,6 +68,18 @@ export default function RootLayout({
       className="scroll-smooth"
       suppressHydrationWarning
     >
+      <head>
+        {supabaseOrigin ? (
+          <>
+            <link
+              rel="preconnect"
+              href={supabaseOrigin}
+              crossOrigin="anonymous"
+            />
+            <link rel="dns-prefetch" href={supabaseOrigin} />
+          </>
+        ) : null}
+      </head>
       <body
         className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
       >
