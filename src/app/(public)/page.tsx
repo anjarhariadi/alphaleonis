@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { myAccount, myTool } from "@/features/landing/contents";
+import { ExperienceTimer } from "@/features/landing/components/ExperienceTimer";
 
 export default async function Home() {
   const [me, portfolios, experiences] = await Promise.all([
@@ -31,6 +32,7 @@ export default async function Home() {
     getPortfoliosCached(),
     getExperiencesCached(),
   ]);
+  const serverNow = Date.now();
 
   return (
     <>
@@ -143,28 +145,34 @@ export default async function Home() {
       </SectionContainer>
 
       {/* Experience */}
-      <SectionContainer id="experience" className="flex items-center">
+      <SectionContainer id="experience" className="flex items-center gap-6">
         <h1 className="text-primary text-lg font-bold">Experience</h1>
+        <ExperienceTimer serverNow={serverNow} />
         <div>
           {experiences.map((experience, index) => {
             const lastItem = index === experiences.length - 1;
             return (
-              <div key={`exp-${experience.id}`} className="flex gap-6">
+              <div
+                key={`exp-${experience.id}`}
+                className="mt-6 flex flex-col md:mt-0 md:flex-row md:gap-6"
+              >
                 <span className="text-muted-foreground w-42 font-mono text-sm font-light">
                   {experience.period}
                 </span>
-                <div className="relative">
-                  <div className="bg-background border-primary aspect-square w-3 -translate-x-1 translate-y-1 rounded-full border-2" />
-                  <div className="h-full border-l"></div>
-                </div>
-                <div className={lastItem ? "" : "pb-16"}>
-                  <h2 className="text-lg font-bold">{experience.company}</h2>
-                  <h4 className="text-muted-foreground font-mono">
-                    {experience.title}
-                  </h4>
-                  <p className="whitespace-pre-wrap">
-                    {experience.description}
-                  </p>
+                <div className="flex flex-1 gap-6">
+                  <div className="relative">
+                    <div className="bg-background border-primary aspect-square w-3 -translate-x-1 translate-y-1 rounded-full border-2" />
+                    <div className="h-full border-l"></div>
+                  </div>
+                  <div className={cn("space-y-2", lastItem ? "" : "pb-16")}>
+                    <h2 className="text-lg font-bold">{experience.company}</h2>
+                    <h4 className="text-primary mb-3 font-mono text-sm uppercase">
+                      {experience.title}
+                    </h4>
+                    <p className="whitespace-pre-wrap">
+                      {experience.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
