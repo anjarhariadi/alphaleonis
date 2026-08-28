@@ -35,6 +35,22 @@ const config = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
   },
   // output: "standalone",
+  async rewrites() {
+    return [{ source: "/llm.txt", destination: "/llms.txt" }];
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Link",
+            value: `</llms.txt>; rel="describedby"; type="text/plain"`,
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default config;

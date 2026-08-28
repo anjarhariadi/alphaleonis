@@ -104,7 +104,6 @@ export default async function Home() {
                   <Image
                     width={40}
                     height={40}
-                    sizes="40px"
                     alt={tool.alt}
                     src={tool.image}
                     className="aspect-[4/3] w-10 object-contain opacity-100 transition-opacity hover:opacity-60"

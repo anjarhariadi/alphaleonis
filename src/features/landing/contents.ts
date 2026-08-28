@@ -76,7 +76,6 @@ export const myTool: Tools[] = [
     image: "/mytools/jira.png",
     ariaLabel: "Jira as project management tool",
   },
-
   {
     alt: "Go Lang",
     image: "/mytools/go.svg",
@@ -84,22 +83,22 @@ export const myTool: Tools[] = [
   },
   {
     alt: "React JS",
-    image: "mytools/react.svg",
+    image: "/mytools/react.svg",
     ariaLabel: "React JS as coding tool",
   },
   {
     alt: "Flutter",
-    image: "mytools/flutter.svg",
+    image: "/mytools/flutter.svg",
     ariaLabel: "Flutter as coding tool",
   },
   {
     alt: "Vue JS",
-    image: "mytools/vue.svg",
+    image: "/mytools/vue.svg",
     ariaLabel: "Vue JS as coding tool",
   },
   {
     alt: "Figma",
-    image: "mytools/figma.svg",
+    image: "/mytools/figma.svg",
     ariaLabel: "Figma as design tool",
   },
   {

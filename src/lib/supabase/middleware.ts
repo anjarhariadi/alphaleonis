@@ -2,17 +2,20 @@ import { env } from "@/env";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
-  const excludedPaths = [
-    "/login",
-    "/auth",
-    "/api/trpc",
-    "/blog",
-    "/sitemap",
-    "/robots",
-    "/portfolio",
-  ];
+const excludedPaths = [
+  "/login",
+  "/auth",
+  "/api/trpc",
+  "/blog",
+  "/sitemap",
+  "/robots",
+  "/portfolio",
+  "/llms.txt",
+  "/llm.txt",
+  "/llms-full.txt",
+];
 
+export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
