@@ -15,7 +15,7 @@ const NavBar = ({ className }: { className?: string }) => {
   }
 
   return (
-    <div className="bg-sidebar sticky top-0 z-50 border-b px-5 py-1">
+    <div className="bg-sidebar sticky top-0 z-50 border-b px-5 py-4">
       <div className={cn("flex items-center justify-between gap-4", className)}>
         <Link href={"/"} className="text-primary text-2xl font-bold">
           Anjar.Hariadi
@@ -30,7 +30,7 @@ const NavBar = ({ className }: { className?: string }) => {
         />
         <div
           className={cn(
-            "bg-sidebar fixed flex h-screen w-[70%] flex-col items-center justify-center gap-4 p-4 font-mono shadow-md lg:static lg:h-fit lg:w-max lg:flex-row lg:shadow-none",
+            "bg-sidebar fixed flex h-screen w-[70%] flex-col items-center justify-center gap-4 font-mono shadow-md lg:static lg:h-fit lg:w-max lg:flex-row lg:shadow-none",
             showDrawer ? "right-0" : "right-[-100%]",
             "top-0 transition-all",
           )}
