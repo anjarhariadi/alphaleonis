@@ -194,6 +194,7 @@ export function renderBlocks({
             alt={`notion-image-${block.id}`}
             width={700}
             height={700}
+            sizes="(max-width:768px) 100vw, 700px"
             className="mx-auto h-auto w-full max-w-xl"
           />
         );

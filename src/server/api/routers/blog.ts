@@ -12,7 +12,7 @@ export const blogRouter = createTRPCRouter({
         start_cursor: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       // const response = await notion.databases.retrieve({
       //   database_id: env.NOTION_BLOG_DATABASE_ID,
       // });
@@ -24,7 +24,7 @@ export const blogRouter = createTRPCRouter({
             equals: true,
           },
         },
-        page_size: 1,
+        page_size: 10,
         start_cursor: input.start_cursor,
         sorts: [
           {

@@ -1,5 +1,5 @@
 import { profileSchema } from "@/features/profile/schema";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import {
   Bucket,
   MAX_FILE_SIZE_FILE,
@@ -12,7 +12,7 @@ export const profileRouter = createTRPCRouter({
     return ctx.db.profile.findFirst();
   }),
 
-  update: publicProcedure
+  update: protectedProcedure
     .input(profileSchema)
     .mutation(async ({ input, ctx }) => {
       const tmp = new Date().getTime().toString();
@@ -50,7 +50,7 @@ export const profileRouter = createTRPCRouter({
         }
 
         const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
+          .from(Bucket.PROFILE)
           .upload(fileName, buffer, {
             contentType: "application/pdf",
             cacheControl: "3600",
@@ -58,7 +58,7 @@ export const profileRouter = createTRPCRouter({
           });
         if (error) throw new Error(error.message);
         resumeUrl = supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
+          .from(Bucket.PROFILE)
           .getPublicUrl(data.path).data.publicUrl;
       }
 
@@ -76,11 +76,16 @@ export const profileRouter = createTRPCRouter({
         });
       }
 
+      // ponytail: create requires image/resume; undefined will error intentionally — make optional in schema if nullable needed
       return ctx.db.profile.create({
         data: {
           ...input,
-          image: imageUrl ? `${imageUrl}?t=${tmp}` : "#",
-          resume: resumeUrl ? `${resumeUrl}?t=${tmp}` : "#",
+          image: imageUrl
+            ? `${imageUrl}?t=${tmp}`
+            : (undefined as unknown as string),
+          resume: resumeUrl
+            ? `${resumeUrl}?t=${tmp}`
+            : (undefined as unknown as string),
         },
         select: {
           id: true,

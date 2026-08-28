@@ -5,10 +5,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import Heading from "@tiptap/extension-heading";
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
-import Code from "@tiptap/extension-code";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import {
   AlignCenter,
@@ -38,16 +34,13 @@ export default function TiptapInput({
   onChange: (richText: string) => void;
 }) {
   const editor = useEditor({
-    shouldRerenderOnTransaction: true,
     extensions: [
-      StarterKit,
-      Heading.configure({
-        levels: [1, 2, 3],
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
       }),
-      Bold,
-      Italic,
       Underline,
-      Code,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Mathematics,
       Placeholder.configure({ placeholder }),
@@ -57,7 +50,7 @@ export default function TiptapInput({
     editorProps: {
       attributes: {
         class:
-          "rounded-md border min-h-[150px] border-input bg-white focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
+          "rounded-md border min-h-[150px] border-input bg-background focus:ring-offset-2 disabled:cursor-not-allows disabled:opacity-50 p-2",
       },
     },
     onUpdate({ editor }) {
@@ -75,7 +68,7 @@ export default function TiptapInput({
         <ToggleGroup
           type="multiple"
           variant="outline"
-          className="bg-white"
+          className="bg-background"
           value={[
             editor.isActive("bold") ? "bold" : "",
             editor.isActive("italic") ? "italic" : "",
@@ -116,7 +109,7 @@ export default function TiptapInput({
         <ToggleGroup
           type="multiple"
           variant="outline"
-          className="bg-white"
+          className="bg-background"
           value={[
             editor.isActive("heading", { level: 1 }) ? "heading1" : "",
             editor.isActive("heading", { level: 2 }) ? "heading2" : "",
@@ -163,7 +156,7 @@ export default function TiptapInput({
         <ToggleGroup
           type="multiple"
           variant="outline"
-          className="bg-white"
+          className="bg-background"
           value={[
             editor.isActive({ textAlign: "left" }) ? "align-left" : "",
             editor.isActive({ textAlign: "center" }) ? "align-center" : "",
@@ -200,7 +193,7 @@ export default function TiptapInput({
         <ToggleGroup
           type="multiple"
           variant="outline"
-          className="bg-white"
+          className="bg-background"
           value={[]}
         >
           <ToggleGroupItem

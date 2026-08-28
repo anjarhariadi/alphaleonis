@@ -58,6 +58,8 @@ export default async function PortfolioBriefPage({ params }: Props) {
             src={portfolio.image}
             alt={portfolio.title}
             fill
+            priority
+            sizes="(max-width:768px) 100vw, 896px"
             className="object-cover"
           />
         </div>

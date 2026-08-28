@@ -6,7 +6,6 @@ import {
   getPortfoliosCached,
   getProfileCached,
 } from "@/features/landing/actions";
-import NavBar from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,7 +24,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { myAccount, myTool } from "@/features/landing/contents";
-import Footer from "@/components/footer";
 
 export default async function Home() {
   const [me, portfolios, experiences] = await Promise.all([
@@ -57,18 +55,20 @@ export default async function Home() {
                 Let&apos;s Connect
                 <MoveRight />
               </Link>
-              <Link
-                href={`${me?.resume}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  buttonVariants({ size: "xl", variant: "link" }),
-                  "w-fit",
-                )}
-              >
-                <Download />
-                Resume
-              </Link>
+              {me?.resume && (
+                <Link
+                  href={me.resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ size: "xl", variant: "link" }),
+                    "w-fit",
+                  )}
+                >
+                  <Download />
+                  Resume
+                </Link>
+              )}
             </div>
           </div>
 
@@ -81,7 +81,8 @@ export default async function Home() {
               src={me?.image ?? "/me.jpg"}
               width={800}
               height={800}
-              loading="eager"
+              priority
+              sizes="(max-width:768px) 100vw, 50vw"
               className="aspect-square border-2 object-cover p-3"
             />
           </div>
@@ -98,9 +99,9 @@ export default async function Home() {
               <Tooltip key={tool.alt}>
                 <TooltipTrigger>
                   <Image
-                    width={200}
-                    height={200}
-                    priority
+                    width={40}
+                    height={40}
+                    sizes="40px"
                     alt={tool.alt}
                     src={tool.image}
                     className="aspect-[4/3] w-10 object-contain opacity-100 transition-opacity hover:opacity-60"
@@ -124,11 +125,11 @@ export default async function Home() {
           {me?.descContent}
         </p>
         <div className="mt-4 flex gap-6">
-          {myAccount.map((account, index) => (
+          {myAccount.map((account) => (
             <Link
               href={account.href}
               aria-label={account.ariaLabel}
-              key={index}
+              key={account.href}
               className="text-muted-foreground/50 hover:text-primary transition-colors"
             >
               <account.icon />
@@ -197,6 +198,7 @@ export default async function Home() {
                     alt={portfolio.title}
                     width={500}
                     height={500}
+                    sizes="(max-width:768px) 100vw, 384px"
                     className="aspect-video w-full rounded-md object-cover"
                   />
                   <CardTitle className="text-xl">{portfolio.title}</CardTitle>

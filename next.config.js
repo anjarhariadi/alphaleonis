@@ -19,7 +19,7 @@ const config = {
       },
     ],
   },
-  // output: "standalone",
+  output: "standalone",
 };
 
 export default config;

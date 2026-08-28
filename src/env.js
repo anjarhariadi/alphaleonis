@@ -3,11 +3,11 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
-    DIRECT_URL: z.string().url(),
+    DATABASE_URL: z.string().min(1),
+    DIRECT_URL: z.string().min(1),
     SUPABASE_SERVICE_ROLE_KEY: z.string(),
     NOTION_TOKEN: z.string(),
-    NOTION_BLOG_DATABASE_ID: z.string(),
+    NOTION_BLOG_DATABASE_ID: z.string().optional(),
     NOTION_BLOG_DATASOURCE_ID: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])

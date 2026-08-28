@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
-import Link from "next/link";
 
 const DashboardLoginForm = () => {
   const router = useRouter();
@@ -36,6 +35,7 @@ const DashboardLoginForm = () => {
 
     if (res.error) {
       toast.error(res.error.message);
+      return;
     }
 
     router.replace("/dashboard");
@@ -69,9 +69,6 @@ const DashboardLoginForm = () => {
             </FormItem>
           )}
         />
-        {/* <div className="my-3 flex justify-end">
-          <Link href="/forgot-password">Forgot password?</Link>
-        </div> */}
         <Button className="w-full" type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </Button>

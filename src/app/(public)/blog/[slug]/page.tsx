@@ -70,6 +70,7 @@ const BlogPostPage = async ({ params }: Props) => {
             alt={content.post.slug}
             width={700}
             height={700}
+            sizes="(max-width:768px) 100vw, 700px"
             className="aspect-video w-full rounded-md object-cover"
           />
         )}

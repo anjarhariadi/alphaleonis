@@ -1,20 +1,31 @@
+import { env } from "@/env";
 import { getAllPostCached } from "@/features/blog/actions";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allPost = await getAllPostCached(false, undefined);
+  const allBlogs: { slug: string }[] = [];
+  let cursor: string | undefined = undefined;
 
-  const generatedUrls: MetadataRoute.Sitemap = allPost.blogs
-    ? allPost.blogs.map((post) => ({
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
-      }))
-    : [];
+  do {
+    const res = await getAllPostCached(true, cursor);
+    if (res.blogs) allBlogs.push(...res.blogs);
+    cursor = res.next_cursor ?? undefined;
+    if (res.error) break;
+  } while (cursor);
+
+  const generatedUrls: MetadataRoute.Sitemap = allBlogs.map((post) => ({
+    url: `${env.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(),
+  }));
+
   return [
     {
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
+      url: env.NEXT_PUBLIC_BASE_URL,
+      lastModified: new Date(),
     },
     {
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/blog`,
+      url: `${env.NEXT_PUBLIC_BASE_URL}/blog`,
+      lastModified: new Date(),
     },
     ...generatedUrls,
   ];

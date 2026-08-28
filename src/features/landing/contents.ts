@@ -15,8 +15,8 @@ interface Account {
 
 interface MenuItem {
   id: Key;
-  title: String;
-  route: String;
+  title: string;
+  route: string;
 }
 
 export const menuItems: MenuItem[] = [
@@ -79,7 +79,7 @@ export const myTool: Tools[] = [
 
   {
     alt: "Go Lang",
-    image: "mytools/go.svg",
+    image: "/mytools/go.svg",
     ariaLabel: "Go Lang as coding tool",
   },
   {
