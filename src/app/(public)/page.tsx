@@ -14,7 +14,6 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import SectionContainer from "@/components/section-container";
 import { Separator } from "@/components/ui/separator";
@@ -96,7 +95,7 @@ export default async function Home() {
       {/* My Tools */}
       <SectionContainer>
         <div className="bg-sidebar flex items-center border px-4 py-3">
-          <h3 className="mr-5 text-lg font-bold">Tools</h3>
+          <h2 className="mr-5 text-lg font-bold">Tools</h2>
           <div className="flex flex-wrap items-center gap-3">
             {myTool.map((tool) => (
               <Tooltip key={tool.alt}>
@@ -122,7 +121,7 @@ export default async function Home() {
         <span className="text-primary font-mono text-lg font-bold">
           About Me
         </span>
-        <h1 className="text-3xl font-bold">{me?.descTitle}</h1>
+        <h2 className="text-3xl font-bold">{me?.descTitle}</h2>
         <p className="text-muted-foreground mb-3 text-lg whitespace-pre-wrap">
           {me?.descContent}
         </p>
@@ -146,7 +145,7 @@ export default async function Home() {
 
       {/* Experience */}
       <SectionContainer id="experience" className="flex items-center gap-6">
-        <h1 className="text-primary text-lg font-bold">Experience</h1>
+        <h2 className="text-primary text-lg font-bold">Experience</h2>
         <ExperienceTimer serverNow={serverNow} />
         <div>
           {experiences.map((experience, index) => {
@@ -165,7 +164,7 @@ export default async function Home() {
                     <div className="h-full border-l"></div>
                   </div>
                   <div className={cn("space-y-2", lastItem ? "" : "pb-16")}>
-                    <h2 className="text-lg font-bold">{experience.company}</h2>
+                    <h3 className="text-lg font-bold">{experience.company}</h3>
                     <h4 className="text-primary mb-3 font-mono text-sm uppercase">
                       {experience.title}
                     </h4>
@@ -189,9 +188,9 @@ export default async function Home() {
         <span className="text-primary font-mono text-lg font-bold">
           Portfolio
         </span>
-        <h1 className="text-3xl font-bold">
+        <h2 className="text-3xl font-bold">
           Enjoying every process and here’s the results
-        </h1>
+        </h2>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(384px,1fr))] gap-6 py-2">
           {portfolios.map((portfolio) => (
             <Link
@@ -209,7 +208,7 @@ export default async function Home() {
                     sizes="(max-width:768px) 100vw, 384px"
                     className="aspect-video w-full rounded-md object-cover"
                   />
-                  <CardTitle className="text-xl">{portfolio.title}</CardTitle>
+                  <h3 className="leading-none font-semibold text-xl">{portfolio.title}</h3>
                   <div className="flex flex-wrap gap-2">
                     {portfolio.tag.map((tag, index) => (
                       <Badge key={index} variant="secondary">
@@ -235,9 +234,9 @@ export default async function Home() {
         className="bg-secondary flex flex-col gap-3 border p-4"
       >
         <span className="font-mono text-lg font-bold">Contact me</span>
-        <h1 className="text-primary text-2xl font-bold">
+        <h2 className="text-primary text-2xl font-bold">
           Ready to get started?
-        </h1>
+        </h2>
         <p>Feel free to contact me, let’s discuss about your vision!</p>
         <Link
           href={`mailto:${me?.email}`}
