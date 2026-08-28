@@ -8,6 +8,7 @@ export const experienceRouter = createTRPCRouter({
       orderBy: {
         index: "asc",
       },
+      take: 50,
     });
   }),
 

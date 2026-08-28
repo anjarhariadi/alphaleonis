@@ -53,3 +53,29 @@ export async function uploadBase64({
 
   return `${publicUrl}?t=${Date.now()}`;
 }
+
+export function getStoragePathFromPublicUrl(
+  publicUrl: string,
+  bucket: Bucket,
+): string | null {
+  try {
+    const url = new URL(publicUrl);
+    const marker = `/storage/v1/object/public/${bucket}/`;
+    const idx = url.pathname.indexOf(marker);
+    if (idx === -1) return null;
+    return decodeURIComponent(
+      url.pathname.slice(idx + marker.length).split("?")[0]!,
+    );
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteStoredFile(
+  bucket: Bucket,
+  publicUrl: string,
+): Promise<void> {
+  const path = getStoragePathFromPublicUrl(publicUrl, bucket);
+  if (!path) return;
+  await supabaseAdminClient.storage.from(bucket).remove([path]);
+}

@@ -17,7 +17,7 @@ import "katex/dist/katex.min.css";
 export function renderKatexFromHtml(rawHtml: string | null): string {
   if (!rawHtml) return "";
   return rawHtml.replace(
-    /\$\$(.+?)\$\$|\$(.+?)\$/g,
+    /\$\$(.+?)\$\$|\$(.+?)\$/gs,
     (_, blockExpr, inlineExpr) => {
       try {
         const expr = blockExpr || inlineExpr;

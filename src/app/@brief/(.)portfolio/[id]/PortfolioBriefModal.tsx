@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 import PortfolioPopupActions from "./actions";
 import type { Portfolio } from "@prisma/client";
 
@@ -50,7 +51,7 @@ const PortfolioBriefModal = ({ portfolio }: Props) => {
         <CardContent className="flex-1 overflow-y-auto">
           <div
             className="prose prose-sm dark:prose-invert tiptap-content max-w-none"
-            dangerouslySetInnerHTML={{ __html: portfolio.brief }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(portfolio.brief) }}
           />
         </CardContent>
         <CardFooter className="flex gap-2">

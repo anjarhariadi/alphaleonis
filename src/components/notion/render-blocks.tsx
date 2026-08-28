@@ -183,12 +183,13 @@ export function renderBlocks({
       }
 
       case "code": {
-        const code =
-          (
-            block as unknown as {
-              code: { rich_text: { plain_text: string }[] };
-            }
-          ).code.rich_text[0]?.plain_text ?? "";
+        const code = (
+          block as unknown as {
+            code: { rich_text: { plain_text: string }[] };
+          }
+        ).code.rich_text
+          .map((rt) => rt.plain_text)
+          .join("");
         return (
           <pre
             key={key}
@@ -200,12 +201,13 @@ export function renderBlocks({
       }
 
       case "quote": {
-        const quote =
-          (
-            block as unknown as {
-              quote: { rich_text: { plain_text: string }[] };
-            }
-          ).quote.rich_text[0]?.plain_text ?? "";
+        const quote = (
+          block as unknown as {
+            quote: { rich_text: { plain_text: string }[] };
+          }
+        ).quote.rich_text
+          .map((rt) => rt.plain_text)
+          .join("");
         return (
           <blockquote
             key={key}

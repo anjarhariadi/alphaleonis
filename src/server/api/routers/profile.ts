@@ -5,7 +5,9 @@ import { uploadBase64 } from "@/lib/supabase/upload";
 
 export const profileRouter = createTRPCRouter({
   get: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.profile.findFirst();
+    return ctx.db.profile.findFirst({
+      orderBy: { updatedAt: "desc" },
+    });
   }),
 
   update: protectedProcedure
@@ -34,8 +36,10 @@ export const profileRouter = createTRPCRouter({
 
       const { image, resume, ...rest } = input;
 
-      //   Check if there is any existing profile
-      const existingProfile = await ctx.db.profile.findFirst();
+      const existingProfile = await ctx.db.profile.findFirst({
+        orderBy: { updatedAt: "desc" },
+        select: { id: true },
+      });
 
       if (existingProfile) {
         return ctx.db.profile.update({
@@ -48,7 +52,7 @@ export const profileRouter = createTRPCRouter({
         });
       }
 
-      // ponytail: create requires image/resume; undefined will error intentionally — make optional in schema if nullable needed
+      // ponytail: singleton create; image/resume required in DB — undefined will throw intentionally
       return ctx.db.profile.create({
         data: {
           ...rest,

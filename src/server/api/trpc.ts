@@ -6,13 +6,14 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { db } from "@/server/db";
 import { createClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
+import type { User } from "@supabase/supabase-js";
 
 /**
  * 1. CONTEXT
@@ -26,14 +27,10 @@ import { cookies } from "next/headers";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const supabaseServerClient = createClient(await cookies());
-
-  const { data } = await supabaseServerClient.auth.getUser();
+export const createTRPCContext = async () => {
   return {
     db,
-    user: data?.user,
-    ...opts,
+    user: null as User | null,
   };
 };
 
@@ -80,10 +77,15 @@ export const createCallerFactory = t.createCallerFactory;
 export const createTRPCRouter = t.router;
 
 const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.user) {
-    throw new Error("Not authenticated");
+  const supabase = createClient(await cookies());
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (!user || error) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   }
-  return next();
+  return next({ ctx: { ...ctx, user, supabase } });
 });
 
 /**

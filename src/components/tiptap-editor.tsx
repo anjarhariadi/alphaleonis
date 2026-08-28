@@ -5,6 +5,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import {
   AlignCenter,
@@ -54,7 +55,7 @@ export default function TiptapInput({
       },
     },
     onUpdate({ editor }) {
-      onChange(editor.getHTML());
+      onChange(sanitizeHtml(editor.getHTML()));
     },
   });
 

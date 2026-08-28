@@ -20,7 +20,9 @@ export const revalidateLandingPage = async () => {
 };
 
 export async function getProfile() {
-  return db.profile.findFirst();
+  return db.profile.findFirst({
+    orderBy: { updatedAt: "desc" },
+  });
 }
 
 export async function getPortfolios() {
@@ -28,6 +30,8 @@ export async function getPortfolios() {
     where: {
       visible: true,
     },
+    orderBy: { createdAt: "desc" },
+    take: 20,
   });
 }
 
@@ -36,11 +40,15 @@ export async function getExperiences() {
     orderBy: {
       index: "asc",
     },
+    take: 50,
   });
 }
 
 export async function getCertificates() {
-  return db.certificate.findMany();
+  return db.certificate.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 20,
+  });
 }
 
 export async function getPortfolioById(id: number) {

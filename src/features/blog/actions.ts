@@ -1,15 +1,24 @@
 "use server";
 
-import { cache } from "react";
 import type { BlogCategory, BlogPost, BlogPostContent } from "./dto";
 import { extractPageId, type NotionClientError } from "@notionhq/client";
 import { notion } from "@/lib/notion/server";
 import { extractNotionPage } from "./utils";
 import { env } from "@/env";
+import { cached } from "@/lib/cache";
 
-export const getCategoriesCached = cache(getCategories);
-export const getAllPostCached = cache(getAllPost);
-export const getBlogPostCached = cache(getBlogPost);
+export const getCategoriesCached = cached(getCategories, "blog-categories", {
+  tags: ["blog"],
+  revalidate: 3600,
+});
+export const getAllPostCached = cached(getAllPost, "blog-posts", {
+  tags: ["blog"],
+  revalidate: 3600,
+});
+export const getBlogPostCached = cached(getBlogPost, "blog-post", {
+  tags: ["blog"],
+  revalidate: 3600,
+});
 
 export async function getCategories() {
   try {
@@ -17,8 +26,11 @@ export async function getCategories() {
       data_source_id: env.NOTION_BLOG_DATASOURCE_ID,
     });
     return {
-      data: (db.properties.Categories as any).multi_select
-        .options as BlogCategory[],
+      data: (
+        db.properties.Categories as unknown as {
+          multi_select: { options: BlogCategory[] };
+        }
+      ).multi_select.options as BlogCategory[],
     };
   } catch (error) {
     return {
@@ -58,7 +70,7 @@ export async function getAllPost(
               equals: true,
             },
           },
-      page_size: pagination ? 10 : undefined,
+      page_size: 10,
       start_cursor: start_cursor,
       sorts: [
         {
@@ -92,11 +104,28 @@ export async function getBlogPost(
 
   try {
     const page = await notion.pages.retrieve({ page_id: pageId });
-    const content = await notion.blocks.children.list({ block_id: pageId });
+    // paginate blocks — Notion returns max 100 per request
+    const blocks: BlogPostContent["content"] = [];
+    let cursor: string | undefined = undefined;
+    let hasMore = true;
+    while (hasMore) {
+      const res = (await notion.blocks.children.list({
+        block_id: pageId,
+        start_cursor: cursor,
+        page_size: 100,
+      })) as unknown as {
+        results: BlogPostContent["content"];
+        has_more: boolean;
+        next_cursor: string | null;
+      };
+      blocks.push(...res.results);
+      hasMore = res.has_more;
+      cursor = res.next_cursor ?? undefined;
+    }
 
     return {
       post: extractNotionPage(page),
-      content: content.results,
+      content: blocks,
       success: true,
     };
   } catch (error) {

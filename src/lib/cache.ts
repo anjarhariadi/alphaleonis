@@ -1,10 +1,15 @@
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
-export const cached = <T extends (...args: unknown[]) => unknown>(
+export const cached = <T extends (...args: any[]) => any>(
   fn: T,
   key: string,
-) => unstable_cache(fn as never, [key], { tags: [key] }) as unknown as T;
+  opts?: { revalidate?: number; tags?: string[] },
+) =>
+  unstable_cache(fn as never, [key], {
+    tags: opts?.tags ?? [key],
+    revalidate: opts?.revalidate ?? 3600,
+  }) as unknown as T;
 
 export const requestCached = cache;
 

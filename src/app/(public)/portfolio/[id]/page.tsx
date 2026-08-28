@@ -2,11 +2,22 @@ import { ArrowLeft, Github, MoveRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getPortfolioByIdCached } from "@/features/landing/actions";
+import {
+  getPortfolioByIdCached,
+  getPortfoliosCached,
+} from "@/features/landing/actions";
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { sanitizeHtml } from "@/lib/sanitize";
 import type { Metadata, ResolvingMetadata } from "next";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const portfolios = await getPortfoliosCached();
+  return portfolios.map((p) => ({ id: String(p.id) }));
+}
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -80,7 +91,7 @@ export default async function PortfolioBriefPage({ params }: Props) {
       {/* Brief content */}
       <div
         className="prose prose-lg dark:prose-invert tiptap-content max-w-none rounded-xl border p-3"
-        dangerouslySetInnerHTML={{ __html: portfolio.brief }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(portfolio.brief) }}
       />
 
       {/* Action buttons */}

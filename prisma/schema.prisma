@@ -2,60 +2,69 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider  = "postgresql"
-    url       = env("DATABASE_URL")
-    directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Profile {
-    id          Int      @id @default(autoincrement())
-    greeting    String
-    descTitle   String
-    descContent String
-    email       String
-    image       String
-    resume      String
-    mood        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  greeting    String
+  descTitle   String
+  descContent String
+  email       String
+  image       String
+  resume      String
+  mood        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([updatedAt])
 }
 
 model Portfolio {
-    id          Int      @id @default(autoincrement())
-    title       String
-    description String
-    brief       String
-    url         String?
-    githubUrl   String?
-    image       String?
-    visible     Boolean  @default(true)
-    tag         String[]
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  brief       String
+  url         String?
+  githubUrl   String?
+  image       String?
+  visible     Boolean  @default(true)
+  tag         String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([visible])
+  @@index([createdAt])
 }
 
 model Experience {
-    id          Int      @id @default(autoincrement())
-    index       Int      @default(0)
-    company     String
-    title       String
-    description String?
-    period      String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  index       Int      @default(0)
+  company     String
+  title       String
+  description String?
+  period      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([index])
 }
 
 model Certificate {
-    id         Int      @id @default(autoincrement())
-    title      String
-    issuer     String
-    image      String
-    validation String?
-    period     String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  title      String
+  issuer     String
+  image      String
+  validation String?
+  period     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([createdAt])
 }

@@ -1,4 +1,4 @@
-import { getBlogPostCached } from "@/features/blog/actions";
+import { getAllPostCached, getBlogPostCached } from "@/features/blog/actions";
 import { notFound } from "next/navigation";
 import { renderBlocks } from "@/components/notion/render-blocks";
 import { Separator } from "@/components/ui/separator";
@@ -43,10 +43,18 @@ export async function generateMetadata(
   };
 }
 
-export const revalidate = 10800; // 3 hours
+export const revalidate = 3600;
 
-export function generateStaticParams() {
-  return [];
+export async function generateStaticParams() {
+  const blogs: { slug: string }[] = [];
+  let cursor: string | undefined = undefined;
+  do {
+    const res = await getAllPostCached(true, cursor);
+    if (res.blogs) blogs.push(...res.blogs);
+    cursor = res.next_cursor ?? undefined;
+    if (res.error) break;
+  } while (cursor);
+  return blogs.slice(0, 20).map((p) => ({ slug: p.slug }));
 }
 
 const BlogPostPage = async ({ params }: Props) => {
