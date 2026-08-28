@@ -8,7 +8,7 @@ export const cached = <T extends (...args: any[]) => any>(
 ) =>
   unstable_cache(fn as never, [key], {
     tags: opts?.tags ?? [key],
-    revalidate: opts?.revalidate ?? 3600,
+    revalidate: opts?.revalidate ?? false,
   }) as unknown as T;
 
 export const requestCached = cache;
