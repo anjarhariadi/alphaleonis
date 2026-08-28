@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// ponytail: calendar borrow diff, correct for variable month lengths — no date-fns needed
 const START = new Date("2023-02-01T01:00:00.000Z"); // 2023-02-01 08:00 WIB (UTC+7)
 
 type Elapsed = {
@@ -71,7 +70,6 @@ function Flip({
       }
     >
       <div className="relative h-8 overflow-hidden">
-        {/* ponytail: key remount triggers slide-down, CSS only — swap to motion lib if jank */}
         <div
           key={value}
           className={
@@ -104,7 +102,6 @@ export function ExperienceTimer({ serverNow }: { serverNow: number }) {
   );
 
   useEffect(() => {
-    // ponytail: server-anchored monotonic clock — immune to client clock skew; rAF if tab throttling matters
     perfStartRef.current = performance.now();
     const getNow = () =>
       new Date(serverNow + (performance.now() - perfStartRef.current));

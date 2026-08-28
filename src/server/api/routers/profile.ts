@@ -52,7 +52,6 @@ export const profileRouter = createTRPCRouter({
         });
       }
 
-      // ponytail: singleton create; image/resume required in DB — undefined will throw intentionally
       return ctx.db.profile.create({
         data: {
           ...rest,
