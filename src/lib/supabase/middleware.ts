@@ -43,7 +43,7 @@ export async function updateSession(request: NextRequest) {
             options?: { [key: string]: any };
           }[],
         ) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
           supabaseResponse = NextResponse.next({

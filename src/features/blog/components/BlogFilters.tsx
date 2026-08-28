@@ -48,7 +48,9 @@ export default function BlogFilters() {
         })
         .finally(() => setIsLoading(false));
     };
-    setBlogs([]);
+    (() => {
+      setBlogs([]);
+    })();
     fetchInitial();
   }, [category]);
 
@@ -76,6 +78,7 @@ export default function BlogFilters() {
         <p className="text-center text-lg">Here you can find my blog posts.</p>
 
         <div className="flex items-center gap-2">
+          {isLoadingCategories && "Loading categories..."}
           {categories?.map((tag) => (
             <Badge
               key={tag.name}
