@@ -1,5 +1,4 @@
 import { renderKatexFromHtml } from "@/lib/katex-util";
-import { cn } from "@/lib/utils";
 import type {
   BlockObjectResponse,
   PartialBlockObjectResponse,
@@ -11,6 +10,7 @@ import type {
   EquationBlockObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import Image from "next/image";
+import { RichText } from "./rich-text";
 
 type Block = PartialBlockObjectResponse | BlockObjectResponse;
 
@@ -27,13 +27,10 @@ export function renderBlocks({
 }: RenderBlocksProps) {
   const grouped: (Block | Block[])[] = [];
 
-  // Group consecutive list items safely using a while loop.
   let i = 0;
   while (i < blocks.length) {
     const current = blocks[i];
     if (!current || !("type" in current)) {
-      // push as-is (or skip) if partial/malformed
-      // grouped.push(current);
       i++;
       continue;
     }
@@ -53,7 +50,7 @@ export function renderBlocks({
         }
       }
       grouped.push(group);
-      i = j; // advance to first non-grouped index
+      i = j;
     } else {
       grouped.push(current);
       i++;
@@ -68,8 +65,15 @@ export function renderBlocks({
       if (!first || !("type" in first)) return null;
       const type = first.type;
       const listItems = item.map((blk, liIdx) => {
-        const text = ((blk as any)[type]?.rich_text ?? [])
-          .map((t: any) => t.plain_text)
+        const text = (
+          (
+            blk as unknown as Record<
+              string,
+              { rich_text: { plain_text: string }[] }
+            >
+          )[type]?.rich_text ?? []
+        )
+          .map((t) => t.plain_text)
           .join("");
         return (
           <li key={`${key}-li-${liIdx}`} className="leading-relaxed">
@@ -85,7 +89,6 @@ export function renderBlocks({
           </ol>
         );
       } else {
-        // bulleted_list_item
         return (
           <ul key={key} className="my-2 ml-6 list-disc space-y-1">
             {listItems}
@@ -95,10 +98,9 @@ export function renderBlocks({
     }
 
     const block = item as Block;
-    if (!("type" in block)) return null; // safety for partial responses
+    if (!("type" in block)) return null;
 
     const { type } = block;
-    // Add "text" to type for rich_text recursion
     type allTypes = typeof type | "text";
     const detailedType = type as allTypes;
 
@@ -108,7 +110,7 @@ export function renderBlocks({
         return (
           <p key={key}>
             {renderBlocks({
-              blocks: paragraph.rich_text as any[],
+              blocks: paragraph.rich_text as unknown as Block[],
               fromRichText: true,
               parentId: block.id,
             })}
@@ -117,18 +119,22 @@ export function renderBlocks({
       }
 
       case "text": {
-        // for rich_text recursion
         return (
-          <span
-            key={key}
-            className={cn(
-              (block as any).annotations.italic && "italic",
-              (block as any).annotations.underline && "underline",
-              (block as any).annotations.strikethrough && "line-through",
-              (block as any).annotations.bold && "font-bold",
-            )}
-          >
-            {(block as any).plain_text}
+          <span key={key}>
+            <RichText
+              rich_text={[
+                block as unknown as {
+                  plain_text: string;
+                  annotations: {
+                    bold?: boolean;
+                    italic?: boolean;
+                    underline?: boolean;
+                    strikethrough?: boolean;
+                  };
+                  href: string | null;
+                },
+              ]}
+            />
           </span>
         );
       }
@@ -137,19 +143,7 @@ export function renderBlocks({
         const text = (block as Heading1BlockObjectResponse).heading_1.rich_text;
         return (
           <h1 key={key} className="text-2xl font-bold">
-            {text.map((rt, index) => (
-              <span
-                key={key + "-rt-" + index}
-                className={cn(
-                  rt.annotations.italic && "italic",
-                  rt.annotations.underline && "underline",
-                  rt.annotations.strikethrough && "line-through",
-                  rt.annotations.bold && "font-bold",
-                )}
-              >
-                {rt.plain_text}
-              </span>
-            ))}
+            <RichText rich_text={text as never} />
           </h1>
         );
       }
@@ -158,19 +152,7 @@ export function renderBlocks({
         const text = (block as Heading2BlockObjectResponse).heading_2.rich_text;
         return (
           <h2 key={key} className="text-xl font-semibold">
-            {text.map((rt, index) => (
-              <span
-                key={key + "-rt-" + index}
-                className={cn(
-                  rt.annotations.italic && "italic",
-                  rt.annotations.underline && "underline",
-                  rt.annotations.strikethrough && "line-through",
-                  rt.annotations.bold && "font-bold",
-                )}
-              >
-                {rt.plain_text}
-              </span>
-            ))}
+            <RichText rich_text={text as never} />
           </h2>
         );
       }
@@ -179,7 +161,7 @@ export function renderBlocks({
         const text = (block as Heading3BlockObjectResponse).heading_3.rich_text;
         return (
           <h3 key={key} className="text-lg font-medium">
-            {text.map((rt) => rt.plain_text).join("")}
+            <RichText rich_text={text as never} />
           </h3>
         );
       }
@@ -201,7 +183,12 @@ export function renderBlocks({
       }
 
       case "code": {
-        const code = (block as any).code.rich_text[0]?.plain_text ?? "";
+        const code =
+          (
+            block as unknown as {
+              code: { rich_text: { plain_text: string }[] };
+            }
+          ).code.rich_text[0]?.plain_text ?? "";
         return (
           <pre
             key={key}
@@ -213,7 +200,12 @@ export function renderBlocks({
       }
 
       case "quote": {
-        const quote = (block as any).quote.rich_text[0]?.plain_text ?? "";
+        const quote =
+          (
+            block as unknown as {
+              quote: { rich_text: { plain_text: string }[] };
+            }
+          ).quote.rich_text[0]?.plain_text ?? "";
         return (
           <blockquote
             key={key}

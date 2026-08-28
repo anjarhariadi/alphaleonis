@@ -11,20 +11,12 @@ import Image from "next/image";
 import React from "react";
 import EditCertificateForm from "../form/EditCertificateForm";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useTRPC } from "@/trpc/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { revalidateLandingPage } from "@/features/landing/actions";
 
 const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
   const trpc = useTRPC();
@@ -39,6 +31,7 @@ const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
             (prev ?? []).filter((item) => item.id !== certificate.id),
         );
         toast.success("Certificate berhasil dihapus");
+        revalidateLandingPage();
       },
       onError: (err) => {
         toast.error(err.message);
@@ -53,6 +46,7 @@ const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
           alt={certificate.title}
           width={500}
           height={500}
+          sizes="(max-width:768px) 100vw, 384px"
           className="aspect-[1.414/1] w-full rounded-md object-cover"
         />
         <CardTitle>{certificate.title}</CardTitle>
@@ -73,33 +67,20 @@ const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
       </CardContent>
       <CardFooter className="gap-2">
         <EditCertificateForm id={certificate.id} defaultValues={certificate} />
-        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-          <AlertDialogTrigger asChild>
-            <Button
-              disabled={deleteCertificate.isPending}
-              variant="destructive"
-              size="icon"
-            >
-              <Trash2 />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                Apakah Kamu Benar-Benar Yakin?
-              </AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Batalkan</AlertDialogCancel>
-              <AlertDialogAction
-                className={buttonVariants({ variant: "destructive" })}
-                onClick={() => deleteCertificate.mutate({ id: certificate.id })}
-              >
-                Konfirmasi
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <Button
+          disabled={deleteCertificate.isPending}
+          variant="destructive"
+          size="icon"
+          onClick={() => setIsOpen(true)}
+        >
+          <Trash2 />
+        </Button>
+        <ConfirmDialog
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          loading={deleteCertificate.isPending}
+          onConfirm={() => deleteCertificate.mutate({ id: certificate.id })}
+        />
       </CardFooter>
     </Card>
   );

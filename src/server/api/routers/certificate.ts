@@ -3,8 +3,8 @@ import {
   editCertificateSchema,
 } from "@/features/certificate/schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { Bucket, MAX_FILE_SIZE_IMAGE } from "@/lib/supabase/bucket";
-import { supabaseAdminClient } from "@/lib/supabase/server";
+import { Bucket } from "@/lib/supabase/bucket";
+import { uploadBase64 } from "@/lib/supabase/upload";
 import z from "zod";
 
 export const certificateRouter = createTRPCRouter({
@@ -15,33 +15,17 @@ export const certificateRouter = createTRPCRouter({
   add: protectedProcedure
     .input(addCertificateSchema)
     .mutation(async ({ ctx, input }) => {
-      const tmp = new Date().getTime().toString();
-
-      //    Upload input.image to supabase storage
-      let imageUrl: string = "#";
-      const fileName = `certification-${input.title}.jpeg`;
-      const buffer = Buffer.from(input.image, "base64");
-
-      if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
-        throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
-      }
-
-      const { data, error } = await supabaseAdminClient.storage
-        .from(Bucket.CERTIFICATE)
-        .upload(fileName, buffer, {
-          contentType: "image/jpeg",
-          cacheControl: "3600",
-          upsert: true,
-        });
-      if (error) throw new Error(error.message);
-      imageUrl = supabaseAdminClient.storage
-        .from(Bucket.CERTIFICATE)
-        .getPublicUrl(data.path).data.publicUrl;
-
+      const imageUrl = await uploadBase64({
+        bucket: Bucket.CERTIFICATE,
+        filename: `certification-${crypto.randomUUID()}.jpeg`,
+        base64: input.image,
+        contentType: "image/jpeg",
+      });
+      const { image, ...rest } = input;
       return ctx.db.certificate.create({
         data: {
-          ...input,
-          image: `${imageUrl}?t=${tmp}`,
+          ...rest,
+          image: imageUrl,
         },
       });
     }),
@@ -54,35 +38,22 @@ export const certificateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const tmp = new Date().getTime().toString();
-      //    Upload input.image if exists to supabase storage
       let imageUrl: string | undefined = undefined;
       if (input.data.image) {
-        const fileName = `certification-${input.data.title}.jpeg`;
-        const buffer = Buffer.from(input.data.image, "base64");
-
-        if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
-          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
-        }
-
-        const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.CERTIFICATE)
-          .upload(fileName, buffer, {
-            contentType: "image/jpeg",
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (error) throw new Error(error.message);
-        imageUrl = supabaseAdminClient.storage
-          .from(Bucket.CERTIFICATE)
-          .getPublicUrl(data.path).data.publicUrl;
+        imageUrl = await uploadBase64({
+          bucket: Bucket.CERTIFICATE,
+          filename: `certification-${crypto.randomUUID()}.jpeg`,
+          base64: input.data.image,
+          contentType: "image/jpeg",
+        });
       }
 
+      const { image, ...rest } = input.data;
       return ctx.db.certificate.update({
         where: { id: input.id },
         data: {
-          ...input.data,
-          image: imageUrl ? `${imageUrl}?t=${tmp}` : undefined,
+          ...rest,
+          ...(imageUrl ? { image: imageUrl } : {}),
         },
       });
     }),

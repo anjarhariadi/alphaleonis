@@ -1,11 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { profileSchema, type ProfileSchemaType } from "../schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Profile } from "@prisma/client";
-import { fileToBase64 } from "@/lib/form-util";
 import { toast } from "sonner";
 import {
   Form,
@@ -23,6 +22,7 @@ import Image from "next/image";
 import { revalidateLandingPage } from "@/features/landing/actions";
 import { useTRPC } from "@/trpc/react";
 import { useMutation } from "@tanstack/react-query";
+import { useBase64Field } from "@/hooks/use-base64-field";
 
 const UpdateProfileForm = ({
   defaultValues,
@@ -33,31 +33,24 @@ const UpdateProfileForm = ({
   const form = useForm<ProfileSchemaType>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      greeting: defaultValues.greeting || "",
-      descTitle: defaultValues.descTitle || "",
-      descContent: defaultValues.descContent || "",
-      email: defaultValues.email || "",
+      greeting: defaultValues.greeting ?? "",
+      descTitle: defaultValues.descTitle ?? "",
+      descContent: defaultValues.descContent ?? "",
+      email: defaultValues.email ?? "",
       image: undefined,
       resume: undefined,
-      mood: defaultValues.mood || "",
+      mood: defaultValues.mood ?? "",
     },
   });
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const base64 = await fileToBase64(file);
-      form.setValue("image", base64);
-    }
-  };
+  const imageField = useBase64Field(form, "image");
+  const resumeField = useBase64Field(form, "resume");
 
-  const handleResumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const base64 = await fileToBase64(file);
-      form.setValue("resume", base64);
+  useEffect(() => {
+    if (defaultValues.image && defaultValues.image !== "#") {
+      imageField.setPreview(defaultValues.image);
     }
-  };
+  }, [defaultValues.image, imageField]);
 
   const updateProfile = useMutation(
     trpc.profile.update.mutationOptions({
@@ -151,14 +144,14 @@ const UpdateProfileForm = ({
         <FormField
           control={form.control}
           name="image"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Image</FormLabel>
               <FormControl>
                 <Input
                   type="file"
                   accept="image/*"
-                  onChange={handleImageChange}
+                  onChange={imageField.handleChange}
                 />
               </FormControl>
               <FormMessage />
@@ -166,9 +159,9 @@ const UpdateProfileForm = ({
           )}
         />
 
-        {defaultValues.image && defaultValues.image !== "#" && (
+        {imageField.preview && (
           <Image
-            src={defaultValues.image}
+            src={imageField.preview}
             alt="Profile Image"
             width={200}
             height={200}
@@ -178,14 +171,14 @@ const UpdateProfileForm = ({
         <FormField
           control={form.control}
           name="resume"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Resume</FormLabel>
               <FormControl>
                 <Input
                   type="file"
                   accept="application/pdf"
-                  onChange={handleResumeChange}
+                  onChange={resumeField.handleChange}
                 />
               </FormControl>
               <FormMessage />

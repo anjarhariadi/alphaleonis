@@ -8,13 +8,7 @@ export const addCertificateSchema = z.object({
   period: z.string().min(1),
 });
 
-export const editCertificateSchema = z.object({
-  title: z.string().optional(),
-  issuer: z.string().optional(),
-  image: z.string().optional(),
-  validation: z.string().optional(),
-  period: z.string().optional(),
-});
+export const editCertificateSchema = addCertificateSchema.partial();
 
 export type AddCertificateSchemaType = z.infer<typeof addCertificateSchema>;
 export type EditCertificateSchemaType = z.infer<typeof editCertificateSchema>;

@@ -2,9 +2,12 @@
 
 import ExperienceCard from "@/features/experience/component/ExperienceCard";
 import AddExperienceForm from "@/features/experience/form/AddExperienceForm";
+import {
+  DashboardGrid,
+  DashboardHeader,
+} from "@/components/dashboard/dashboard-grid";
 import { useTRPC } from "@/trpc/react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
 
 const ExperiencePage = () => {
   const trpc = useTRPC();
@@ -13,19 +16,12 @@ const ExperiencePage = () => {
   );
   return (
     <div className="space-y-3">
-      <div className="flex justify-between">
-        <h1 className="text-lg font-bold">Experience</h1>
-        <AddExperienceForm />
-      </div>
-      {isLoading ? (
-        <Loader className="animate-spin" />
-      ) : (
-        <div className="space-y-3">
-          {experiences?.map((experience) => (
-            <ExperienceCard key={experience.id} experience={experience} />
-          ))}
-        </div>
-      )}
+      <DashboardHeader title="Experience" action={<AddExperienceForm />} />
+      <DashboardGrid isLoading={isLoading} data={experiences} variant="list">
+        {experiences?.map((experience) => (
+          <ExperienceCard key={experience.id} experience={experience} />
+        ))}
+      </DashboardGrid>
     </div>
   );
 };

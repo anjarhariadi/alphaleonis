@@ -66,10 +66,9 @@ export function DashboardSidebar() {
             <SidebarMenu>
               {items.map((item) => {
                 const isActive =
-                  pathName === "/dashboard"
-                    ? pathName === item.url
-                    : pathName?.startsWith(item.url) &&
-                      item.url !== "/dashboard";
+                  pathName === item.url ||
+                  (item.url !== "/dashboard" &&
+                    pathName?.startsWith(item.url + "/"));
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton isActive={isActive} asChild>

@@ -1,8 +1,8 @@
 import z from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { portfolioSchema } from "@/features/portfolio/schema";
-import { Bucket, MAX_FILE_SIZE_IMAGE } from "@/lib/supabase/bucket";
-import { supabaseAdminClient } from "@/lib/supabase/server";
+import { Bucket } from "@/lib/supabase/bucket";
+import { uploadBase64 } from "@/lib/supabase/upload";
 
 export const portfolioRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -26,33 +26,20 @@ export const portfolioRouter = createTRPCRouter({
   add: protectedProcedure
     .input(portfolioSchema)
     .mutation(async ({ ctx, input }) => {
-      const tmp = new Date().getTime().toString();
-      // If there is input.image, upload to supabase storage
       let imageUrl: string | undefined = undefined;
       if (input.image) {
-        const fileName = `portfolio-${input.title}.jpeg`;
-        const buffer = Buffer.from(input.image, "base64");
-
-        if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
-          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
-        }
-
-        const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
-          .upload(fileName, buffer, {
-            contentType: "image/jpeg",
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (error) throw new Error(error.message);
-        imageUrl = supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
-          .getPublicUrl(data.path).data.publicUrl;
+        imageUrl = await uploadBase64({
+          bucket: Bucket.PORTFOLIO,
+          filename: `portfolio-${crypto.randomUUID()}.jpeg`,
+          base64: input.image,
+          contentType: "image/jpeg",
+        });
       }
+      const { image, ...rest } = input;
       return ctx.db.portfolio.create({
         data: {
-          ...input,
-          image: imageUrl ? `${imageUrl}?t=${tmp}` : undefined,
+          ...rest,
+          ...(imageUrl ? { image: imageUrl } : {}),
         },
       });
     }),
@@ -65,34 +52,21 @@ export const portfolioRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const tmp = new Date().getTime().toString();
-      // If there is input.image, upload to supabase storage
       let imageUrl: string | undefined = undefined;
       if (input.data.image) {
-        const fileName = `portfolio-${input.data.title}.jpeg`;
-        const buffer = Buffer.from(input.data.image, "base64");
-
-        if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
-          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
-        }
-
-        const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
-          .upload(fileName, buffer, {
-            contentType: "image/jpeg",
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (error) throw new Error(error.message);
-        imageUrl = supabaseAdminClient.storage
-          .from(Bucket.PORTFOLIO)
-          .getPublicUrl(data.path).data.publicUrl;
+        imageUrl = await uploadBase64({
+          bucket: Bucket.PORTFOLIO,
+          filename: `portfolio-${crypto.randomUUID()}.jpeg`,
+          base64: input.data.image,
+          contentType: "image/jpeg",
+        });
       }
+      const { image, ...rest } = input.data;
       return ctx.db.portfolio.update({
         where: { id: input.id },
         data: {
-          ...input.data,
-          image: imageUrl ? `${imageUrl}?t=${tmp}` : undefined,
+          ...rest,
+          ...(imageUrl ? { image: imageUrl } : {}),
         },
       });
     }),

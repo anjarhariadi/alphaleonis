@@ -1,32 +1,32 @@
 import { createClient } from "@/lib/supabase/client";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 export function useAdminAuthAction() {
   const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  const signIn = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    setLoading(true);
-    const res = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    setLoading(false);
-    return res;
-  };
+  const signIn = useCallback(
+    async ({ email, password }: { email: string; password: string }) => {
+      setLoading(true);
+      try {
+        const res = await supabase.auth.signInWithPassword({ email, password });
+        return res;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [supabase],
+  );
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     setLoading(true);
-    const res = await supabase.auth.signOut();
-    setLoading(false);
-    return res;
-  };
+    try {
+      const res = await supabase.auth.signOut();
+      return res;
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase]);
 
   return {
     signIn,

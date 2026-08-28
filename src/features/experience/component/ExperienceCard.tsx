@@ -1,29 +1,20 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import type { Experience } from "@prisma/client";
 import React from "react";
 import EditExperienceForm from "../form/EditExperienceForm";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTRPC } from "@/trpc/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { revalidateLandingPage } from "@/features/landing/actions";
 
 const ExperienceCard = ({ experience }: { experience: Experience }) => {
   const trpc = useTRPC();
@@ -38,6 +29,7 @@ const ExperienceCard = ({ experience }: { experience: Experience }) => {
             (prev ?? []).filter((item) => item.id !== experience.id),
         );
         toast.success("Experience berhasil dihapus");
+        revalidateLandingPage();
       },
       onError: (err) => {
         toast.error(err.message);
@@ -54,35 +46,20 @@ const ExperienceCard = ({ experience }: { experience: Experience }) => {
           </div>
           <div className="flex gap-2">
             <EditExperienceForm id={experience.id} defaultValues={experience} />
-            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-              <AlertDialogTrigger asChild>
-                <Button
-                  disabled={deleteExperience.isPending}
-                  variant="destructive"
-                  size="icon"
-                >
-                  <Trash2 />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Apakah Kamu Benar-Benar Yakin?
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Batalkan</AlertDialogCancel>
-                  <AlertDialogAction
-                    className={buttonVariants({ variant: "destructive" })}
-                    onClick={() =>
-                      deleteExperience.mutate({ id: experience.id })
-                    }
-                  >
-                    Konfirmasi
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button
+              disabled={deleteExperience.isPending}
+              variant="destructive"
+              size="icon"
+              onClick={() => setIsOpen(true)}
+            >
+              <Trash2 />
+            </Button>
+            <ConfirmDialog
+              open={isOpen}
+              onOpenChange={setIsOpen}
+              loading={deleteExperience.isPending}
+              onConfirm={() => deleteExperience.mutate({ id: experience.id })}
+            />
           </div>
         </div>
       </CardHeader>

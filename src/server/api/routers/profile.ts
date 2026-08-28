@@ -1,11 +1,7 @@
 import { profileSchema } from "@/features/profile/schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import {
-  Bucket,
-  MAX_FILE_SIZE_FILE,
-  MAX_FILE_SIZE_IMAGE,
-} from "@/lib/supabase/bucket";
-import { supabaseAdminClient } from "@/lib/supabase/server";
+import { Bucket, MAX_FILE_SIZE_FILE } from "@/lib/supabase/bucket";
+import { uploadBase64 } from "@/lib/supabase/upload";
 
 export const profileRouter = createTRPCRouter({
   get: publicProcedure.query(async ({ ctx }) => {
@@ -15,52 +11,28 @@ export const profileRouter = createTRPCRouter({
   update: protectedProcedure
     .input(profileSchema)
     .mutation(async ({ input, ctx }) => {
-      const tmp = new Date().getTime().toString();
-
-      // if there are input.image and input.resume, upload to supabase storage
       let imageUrl: string | undefined = undefined;
       if (input.image) {
-        const fileName = `my-image.jpeg`;
-        const buffer = Buffer.from(input.image, "base64");
-
-        if (buffer.byteLength > MAX_FILE_SIZE_IMAGE) {
-          throw new Error("Ukuran gambar tidak boleh lebih dari 5MB");
-        }
-
-        const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.PROFILE)
-          .upload(fileName, buffer, {
-            contentType: "image/jpeg",
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (error) throw new Error(error.message);
-        imageUrl = supabaseAdminClient.storage
-          .from(Bucket.PROFILE)
-          .getPublicUrl(data.path).data.publicUrl;
+        imageUrl = await uploadBase64({
+          bucket: Bucket.PROFILE,
+          filename: "my-image.jpeg",
+          base64: input.image,
+          contentType: "image/jpeg",
+        });
       }
 
       let resumeUrl: string | undefined = undefined;
       if (input.resume) {
-        const fileName = `my-resume.pdf`;
-        const buffer = Buffer.from(input.resume, "base64");
-
-        if (buffer.byteLength > MAX_FILE_SIZE_FILE) {
-          throw new Error("Ukuran file tidak boleh lebih dari 10MB");
-        }
-
-        const { data, error } = await supabaseAdminClient.storage
-          .from(Bucket.PROFILE)
-          .upload(fileName, buffer, {
-            contentType: "application/pdf",
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (error) throw new Error(error.message);
-        resumeUrl = supabaseAdminClient.storage
-          .from(Bucket.PROFILE)
-          .getPublicUrl(data.path).data.publicUrl;
+        resumeUrl = await uploadBase64({
+          bucket: Bucket.PROFILE,
+          filename: "my-resume.pdf",
+          base64: input.resume,
+          contentType: "application/pdf",
+          maxBytes: MAX_FILE_SIZE_FILE,
+        });
       }
+
+      const { image, resume, ...rest } = input;
 
       //   Check if there is any existing profile
       const existingProfile = await ctx.db.profile.findFirst();
@@ -69,9 +41,9 @@ export const profileRouter = createTRPCRouter({
         return ctx.db.profile.update({
           where: { id: existingProfile.id },
           data: {
-            ...input,
-            image: imageUrl ? `${imageUrl}?t=${tmp}` : undefined,
-            resume: resumeUrl ? `${resumeUrl}?t=${tmp}` : undefined,
+            ...rest,
+            ...(imageUrl ? { image: imageUrl } : {}),
+            ...(resumeUrl ? { resume: resumeUrl } : {}),
           },
         });
       }
@@ -79,13 +51,9 @@ export const profileRouter = createTRPCRouter({
       // ponytail: create requires image/resume; undefined will error intentionally — make optional in schema if nullable needed
       return ctx.db.profile.create({
         data: {
-          ...input,
-          image: imageUrl
-            ? `${imageUrl}?t=${tmp}`
-            : (undefined as unknown as string),
-          resume: resumeUrl
-            ? `${resumeUrl}?t=${tmp}`
-            : (undefined as unknown as string),
+          ...rest,
+          image: imageUrl as unknown as string,
+          resume: resumeUrl as unknown as string,
         },
         select: {
           id: true,

@@ -1,48 +1,21 @@
 "use server";
 
 import { db } from "@/server/db";
-import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
-import { cache } from "react";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { cached, requestCached, CACHE_TAGS } from "@/lib/cache";
 
-export const getProfileCached = unstable_cache(getProfile, ["profile"], {
-  // revalidate: 3600,
-  tags: ["profile"],
-});
+export const getProfileCached = cached(getProfile, "profile");
 
-export const getPortfoliosCached = unstable_cache(
-  getPortfolios,
-  ["portfolios"],
-  {
-    // revalidate: 60,
-    tags: ["portfolios"],
-  },
-);
+export const getPortfoliosCached = cached(getPortfolios, "portfolios");
 
-export const getExperiencesCached = unstable_cache(
-  getExperiences,
-  ["experiences"],
-  {
-    // revalidate: 60,
-    tags: ["experiences"],
-  },
-);
+export const getExperiencesCached = cached(getExperiences, "experiences");
 
-export const getCertificatesCached = unstable_cache(
-  getCertificates,
-  ["certificates"],
-  {
-    // revalidate: 60,
-    tags: ["certificates"],
-  },
-);
+export const getCertificatesCached = cached(getCertificates, "certificates");
 
-export const getPortfolioByIdCached = cache(getPortfolioById);
+export const getPortfolioByIdCached = requestCached(getPortfolioById);
 
 export const revalidateLandingPage = async () => {
-  revalidateTag("profile", "max");
-  revalidateTag("portfolios", "max");
-  revalidateTag("experiences", "max");
-  revalidateTag("certificates", "max");
+  CACHE_TAGS.forEach((tag) => revalidateTag(tag, "max"));
   revalidatePath("/");
 };
 
