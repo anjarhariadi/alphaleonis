@@ -54,13 +54,6 @@ export default function RootLayout({
   children,
   brief,
 }: Readonly<{ children: React.ReactNode; brief: React.ReactNode }>) {
-  const supabaseOrigin = (() => {
-    try {
-      return new URL(env.NEXT_PUBLIC_SUPABASE_URL).origin;
-    } catch {
-      return undefined;
-    }
-  })();
   return (
     <html
       lang="en"
@@ -68,21 +61,15 @@ export default function RootLayout({
       className="scroll-smooth"
       suppressHydrationWarning
     >
-      <head>
-        {supabaseOrigin ? (
-          <>
-            <link
-              rel="preconnect"
-              href={supabaseOrigin}
-              crossOrigin="anonymous"
-            />
-            <link rel="dns-prefetch" href={supabaseOrigin} />
-          </>
-        ) : null}
-      </head>
       <body
         className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
       >
+        <a
+          href="#main-content"
+          className="focus:bg-background focus:text-foreground focus:ring-ring sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:px-4 focus:py-2 focus:shadow-md focus:ring-2 focus:outline-none"
+        >
+          Skip to main content
+        </a>
         <NuqsAdapter>
           <ThemeProvider
             attribute="class"

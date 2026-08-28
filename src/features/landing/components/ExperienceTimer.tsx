@@ -119,9 +119,9 @@ export function ExperienceTimer({ serverNow }: { serverNow: number }) {
       aria-label={`Professional experience: ${data.years} years ${data.months} months ${data.days} days ${data.hours} hours ${data.minutes} minutes ${data.seconds} seconds since 1 February 2023 08:00 WIB`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h4 className="text-muted-foreground font-mono text-xs">
+        <h3 className="text-muted-foreground font-mono text-xs">
           Professional Career Time
-        </h4>
+        </h3>
         <span className="text-muted-foreground font-mono text-xs">
           live
           <span className="bg-destructive ml-1 inline-block size-2 animate-pulse rounded-full" />
