@@ -93,7 +93,7 @@ export default async function Home() {
       </SectionContainer>
 
       {/* My Tools */}
-      <SectionContainer>
+      <SectionContainer id="tools">
         <div className="bg-sidebar flex items-center border px-4 py-3">
           <h2 className="mr-5 text-lg font-bold">Tools</h2>
           <div className="flex flex-wrap items-center gap-3">

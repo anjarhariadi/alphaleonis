@@ -7,7 +7,7 @@ import "./src/env.js";
 /** @type {import("next").NextConfig} */
 const config = {
   experimental: {
-    optimizeCss: true,
+    inlineCss: true,
   },
   images: {
     remotePatterns: [
