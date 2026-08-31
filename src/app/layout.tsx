@@ -7,7 +7,6 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 
-import { QueryProvider } from "@/trpc/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
