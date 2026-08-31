@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const excludedPaths = [
@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet: {
             name: string;
             value: string;
-            options?: { [key: string]: any };
+            options?: CookieOptions;
           }[],
         ) {
           cookiesToSet.forEach(({ name, value }) =>

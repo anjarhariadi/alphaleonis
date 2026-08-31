@@ -1,7 +1,7 @@
 import "server-only";
 
 import { env } from "@/env";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { createClient as createDefaultClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
@@ -20,7 +20,7 @@ export const createClient = (
           cookiesToSet: {
             name: string;
             value: string;
-            options?: { [key: string]: any };
+            options?: CookieOptions;
           }[],
         ) {
           try {

@@ -26,7 +26,7 @@ export function renderKatexFromHtml(rawHtml: string | null): string {
           throwOnError: false,
         });
         return html;
-      } catch (e) {
+      } catch {
         return `<span class="text-red-500">[Invalid LaTeX]</span>`;
       }
     },

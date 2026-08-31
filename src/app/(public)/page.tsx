@@ -31,6 +31,7 @@ export default async function Home() {
     getPortfoliosCached(),
     getExperiencesCached(),
   ]);
+  // eslint-disable-next-line react-hooks/purity
   const serverNow = Date.now();
 
   return (
@@ -208,7 +209,9 @@ export default async function Home() {
                     sizes="(max-width:768px) 100vw, 384px"
                     className="aspect-video w-full rounded-md object-cover"
                   />
-                  <h3 className="leading-none font-semibold text-xl">{portfolio.title}</h3>
+                  <h3 className="text-xl leading-none font-semibold">
+                    {portfolio.title}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {portfolio.tag.map((tag, index) => (
                       <Badge key={index} variant="secondary">

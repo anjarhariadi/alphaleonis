@@ -35,7 +35,6 @@ export const profileRouter = createTRPCRouter({
       }
 
       const { image, resume, ...rest } = input;
-
       const existingProfile = await ctx.db.profile.findFirst({
         orderBy: { updatedAt: "desc" },
         select: { id: true },

@@ -128,7 +128,7 @@ export async function getBlogPost(
       content: blocks,
       success: true,
     };
-  } catch (error) {
+  } catch {
     return {
       post: null,
       content: [],

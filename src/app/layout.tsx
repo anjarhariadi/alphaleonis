@@ -11,7 +11,6 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
-import { env } from "@/env";
 
 export const metadata: Metadata = {
   title: {
