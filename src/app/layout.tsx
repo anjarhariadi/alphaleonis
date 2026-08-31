@@ -7,7 +7,7 @@ import {
   JetBrains_Mono,
 } from "next/font/google";
 
-import { TRPCReactProvider } from "@/trpc/react";
+import { QueryProvider } from "@/trpc/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -76,11 +76,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TRPCReactProvider>
-              {children}
-              {brief}
-              <Toaster position="top-center" richColors />
-            </TRPCReactProvider>
+            {children}
+            {brief}
+            <Toaster position="top-center" richColors />
           </ThemeProvider>
         </NuqsAdapter>
       </body>

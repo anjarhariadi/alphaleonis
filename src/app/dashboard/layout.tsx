@@ -1,3 +1,4 @@
+import { TRPCReactProvider } from "@/trpc/react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 import DashboardTopBar from "@/components/dashboard-topbar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -8,12 +9,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider>
-      <DashboardSidebar />
-      <SidebarInset>
-        <DashboardTopBar />
-        <div className="h-full p-4">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <TRPCReactProvider>
+      <SidebarProvider>
+        <DashboardSidebar />
+        <SidebarInset>
+          <DashboardTopBar />
+          <div className="h-full p-4">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    </TRPCReactProvider>
   );
 }
