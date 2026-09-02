@@ -1,5 +1,5 @@
-import { env } from "@/env";
 import { getAllPostCached } from "@/features/blog/actions";
+import { SITE_URL } from "@/features/landing/metadata";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -14,17 +14,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } while (cursor);
 
   const generatedUrls: MetadataRoute.Sitemap = allBlogs.map((post) => ({
-    url: `${env.NEXT_PUBLIC_BASE_URL}/blog/${post.slug}`,
+    url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: new Date(),
   }));
 
   return [
     {
-      url: env.NEXT_PUBLIC_BASE_URL,
+      url: SITE_URL,
       lastModified: new Date(),
     },
     {
-      url: `${env.NEXT_PUBLIC_BASE_URL}/blog`,
+      url: `${SITE_URL}/blog`,
       lastModified: new Date(),
     },
     ...generatedUrls,

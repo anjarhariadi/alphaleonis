@@ -1,4 +1,3 @@
-import { env } from "@/env";
 import {
   getCertificatesCached,
   getExperiencesCached,
@@ -6,15 +5,19 @@ import {
   getProfileCached,
 } from "@/features/landing/actions";
 import { getAllPost, getAllPostCached } from "@/features/blog/actions";
+import { SITE_URL } from "@/features/landing/metadata";
 
 export const revalidate = 3600;
 
 function mdEscape(s: string) {
-  return s.replace(/[\[\]]/g, "").replace(/\r?\n/g, " ").trim();
+  return s
+    .replace(/[\[\]]/g, "")
+    .replace(/\r?\n/g, " ")
+    .trim();
 }
 
 export async function GET() {
-  const base = env.NEXT_PUBLIC_BASE_URL.replace(/\/$/, "");
+  const base = SITE_URL.replace(/\/$/, "");
 
   // sequential to avoid Prisma pool timeout (limit 1) — ponytail: sequential is simpler than pool tuning
   const profile = await getProfileCached().catch(() => null);
@@ -23,15 +26,26 @@ export async function GET() {
   const certificates = await getCertificatesCached().catch(() => []);
 
   // paginate all published Notion posts — try cached first, fall back to uncached on error/empty (stale negative cache)
-  const blogs: { slug: string; title: string; categories: { name: string }[]; publishedDate: string }[] = [];
+  const blogs: {
+    slug: string;
+    title: string;
+    categories: { name: string }[];
+    publishedDate: string;
+  }[] = [];
   let cursor: string | undefined = undefined;
   let guard = 0;
   do {
     // ponytail: 20 pages x10 = 200 posts guard
     if (guard++ > 20) break;
-    let res = (await getAllPostCached(true, cursor).catch(() => null)) as Awaited<ReturnType<typeof getAllPostCached>> | null;
+    let res = (await getAllPostCached(true, cursor).catch(
+      () => null,
+    )) as Awaited<ReturnType<typeof getAllPostCached>> | null;
     // fallback to uncached fetch if cached is poisoned (dev incrementalCache empty, notion transient failure)
-    if (!res || (res as { error?: string }).error || (!res.blogs?.length && !cursor)) {
+    if (
+      !res ||
+      (res as { error?: string }).error ||
+      (!res.blogs?.length && !cursor)
+    ) {
       const fresh = await getAllPost(true, cursor).catch(() => null);
       if (fresh && !fresh.error && fresh.blogs) res = fresh as typeof res;
     }
@@ -66,7 +80,10 @@ export async function GET() {
   lines.push("");
   lines.push(`- [Home](${base}/): Landing, tools, contact`);
   lines.push(`- [Blog](${base}/blog): Articles from Notion`);
-  if (profile?.email) lines.push(`- [Contact](mailto:${profile.email}): ${mdEscape(profile.email)}`);
+  if (profile?.email)
+    lines.push(
+      `- [Contact](mailto:${profile.email}): ${mdEscape(profile.email)}`,
+    );
   if (profile?.resume) lines.push(`- [Resume](${profile.resume}): PDF resume`);
   lines.push("");
 
@@ -79,7 +96,9 @@ export async function GET() {
     for (const p of portfolios) {
       const tags = p.tag?.length ? ` [${p.tag.join(", ")}]` : "";
       const desc = mdEscape((p.description ?? p.brief ?? "").slice(0, 160));
-      lines.push(`- [${mdEscape(p.title)}](${base}/portfolio/${p.id}): ${desc}${tags}`);
+      lines.push(
+        `- [${mdEscape(p.title)}](${base}/portfolio/${p.id}): ${desc}${tags}`,
+      );
     }
   }
   lines.push("");
@@ -109,7 +128,9 @@ export async function GET() {
       const title = mdEscape(c.title);
       const issuer = mdEscape(c.issuer);
       const validation = c.validation ? ` — validation: ${c.validation}` : "";
-      lines.push(`- [${title} — ${issuer}](${base}/#certificates): ${mdEscape(c.period)}${validation}`);
+      lines.push(
+        `- [${title} — ${issuer}](${base}/#certificates): ${mdEscape(c.period)}${validation}`,
+      );
     }
   }
   lines.push("");
@@ -121,9 +142,13 @@ export async function GET() {
     lines.push("- No published blog posts yet.");
   } else {
     for (const b of blogs) {
-      const cats = b.categories?.length ? ` — ${b.categories.map((x) => x.name).join(", ")}` : "";
+      const cats = b.categories?.length
+        ? ` — ${b.categories.map((x) => x.name).join(", ")}`
+        : "";
       const date = b.publishedDate ? ` (${b.publishedDate.slice(0, 10)})` : "";
-      lines.push(`- [${mdEscape(b.title)}](${base}/blog/${b.slug}):${cats}${date}`);
+      lines.push(
+        `- [${mdEscape(b.title)}](${base}/blog/${b.slug}):${cats}${date}`,
+      );
     }
   }
   lines.push("");
@@ -132,7 +157,9 @@ export async function GET() {
   lines.push("");
   lines.push(`- [Sitemap](${base}/sitemap.xml): All indexable URLs`);
   lines.push(`- [Robots](${base}/robots.txt): Crawl rules`);
-  lines.push(`- [Blog RSS — via sitemap](${base}/sitemap.xml): Blog discovery via sitemap`);
+  lines.push(
+    `- [Blog RSS — via sitemap](${base}/sitemap.xml): Blog discovery via sitemap`,
+  );
   lines.push("");
 
   const body = lines.join("\n");

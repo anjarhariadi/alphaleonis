@@ -10,26 +10,63 @@ import {
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ThemeProvider } from "@/components/theme-provider";
+import {
+  AUTHOR_NAME,
+  AUTHOR_NAME_LONG,
+  SITE_DESC,
+  SITE_URL,
+} from "@/features/landing/metadata";
+
+const SITE_TITLE = `${AUTHOR_NAME} – Software Engineer`;
+const METADATA_IMAGE = "/opengraph-image.png";
 
 export const metadata: Metadata = {
   title: {
-    default: "Anjar Hariadi – Software Engineer",
-    template: "%s | Anjar Hariadi",
+    default: SITE_TITLE,
+    template: `%s | ${AUTHOR_NAME}`,
   },
   icons: [{ rel: "icon", url: "/favicon.ico" }],
-  description: "Personal website for my portfolios and blog.",
+  description: SITE_DESC,
+  keywords: [
+    AUTHOR_NAME,
+    AUTHOR_NAME_LONG,
+    "OpenAI",
+    "Ranajaya Citaprasada Thani Indonesia",
+    "Google Developer Group",
+    "Software Engineer",
+    "application security",
+    "machine learning",
+    "data scientist",
+    "software engineer indonesia",
+  ],
+  authors: [{ name: AUTHOR_NAME }],
+  creator: AUTHOR_NAME,
+  metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "Anjar Hariadi – Software Engineer",
-    description: "Personal website for my portfolios and blog.",
-    images: "/opengraph-image.png",
+    title: SITE_TITLE,
+    description: SITE_DESC,
+    images: {
+      url: METADATA_IMAGE,
+      width: 1200,
+      height: 630,
+      alt: SITE_TITLE,
+    },
     siteName: "Anjar Hariadi",
     locale: "id_ID",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anjar Hariadi – Software Engineer",
-    description: "Personal website for my portfolios and blog.",
+    images: [METADATA_IMAGE],
+    title: SITE_TITLE,
+    description: SITE_DESC,
+  },
+  robots: {
+    googleBot: {
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
