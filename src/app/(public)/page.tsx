@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Download, MoveRight, Send } from "lucide-react";
 import {
+  getCurrentTime,
   getExperiencesCached,
   getPortfoliosCached,
   getProfileCached,
@@ -25,14 +26,15 @@ import {
 import { myAccount, myTool } from "@/features/landing/contents";
 import { ExperienceTimer } from "@/features/landing/components/ExperienceTimer";
 
+export const revalidate = 3600;
+
 export default async function Home() {
-  const [me, portfolios, experiences] = await Promise.all([
+  const [me, portfolios, experiences, serverNow] = await Promise.all([
     getProfileCached(),
     getPortfoliosCached(),
     getExperiencesCached(),
+    getCurrentTime(),
   ]);
-  // eslint-disable-next-line react-hooks/purity
-  const serverNow = Date.now();
 
   return (
     <>

@@ -4,9 +4,7 @@ import { db } from "@/server/db";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { cached, requestCached, CACHE_TAGS } from "@/lib/cache";
 
-export const getProfileCached = cached(getProfile, "profile", {
-  revalidate: 60 * 60,
-});
+export const getProfileCached = cached(getProfile, "profile");
 
 export const getPortfoliosCached = cached(getPortfolios, "portfolios");
 
@@ -15,6 +13,8 @@ export const getExperiencesCached = cached(getExperiences, "experiences");
 export const getCertificatesCached = cached(getCertificates, "certificates");
 
 export const getPortfolioByIdCached = requestCached(getPortfolioById);
+
+export const getCurrentTime = () => Date.now();
 
 export const revalidateLandingPage = async () => {
   CACHE_TAGS.forEach((tag) => revalidateTag(tag, "max"));
