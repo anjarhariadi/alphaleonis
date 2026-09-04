@@ -49,7 +49,7 @@ export function DashboardSidebar() {
   const pathName = usePathname();
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="!bg-sidebar-accent">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
@@ -59,7 +59,7 @@ export function DashboardSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="!bg-sidebar-accent">
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarGroupContent>

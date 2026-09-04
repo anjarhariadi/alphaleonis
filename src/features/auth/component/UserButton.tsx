@@ -11,21 +11,28 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
+import { createClient } from "@/lib/supabase/client";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const UserButton = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const router = useRouter();
-  const { signOut, loading } = useAdminAuthAction();
+  const supabase = useMemo(() => createClient(), []);
+  const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
-    const res = await signOut();
-    if (res.error) {
-      toast.error(res.error.message);
+    setLoading(true);
+    let res;
+    try {
+      res = await supabase.auth.signOut();
+    } finally {
+      setLoading(false);
+    }
+    if (res!.error) {
+      toast.error(res!.error.message);
       return;
     }
     setIsOpen(false);

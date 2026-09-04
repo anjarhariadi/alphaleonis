@@ -16,11 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useAdminAuthAction } from "@/hooks/use-admin-auth-action";
+import { createClient } from "@/lib/supabase/client";
+import { useMemo, useState } from "react";
 
 const DashboardLoginForm = () => {
   const router = useRouter();
-  const { signIn, loading } = useAdminAuthAction();
+  const supabase = useMemo(() => createClient(), []);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
@@ -31,10 +33,16 @@ const DashboardLoginForm = () => {
   });
 
   async function onSubmit(values: LoginSchemaType) {
-    const res = await signIn(values);
+    setLoading(true);
+    let res;
+    try {
+      res = await supabase.auth.signInWithPassword(values);
+    } finally {
+      setLoading(false);
+    }
 
-    if (res.error) {
-      toast.error(res.error.message);
+    if (res!.error) {
+      toast.error(res!.error.message);
       return;
     }
 

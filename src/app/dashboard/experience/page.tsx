@@ -1,7 +1,7 @@
 "use client";
 
 import ExperienceCard from "@/features/experience/component/ExperienceCard";
-import AddExperienceForm from "@/features/experience/form/AddExperienceForm";
+import { ExperienceForm } from "@/features/experience/ExperienceForm";
 import {
   DashboardGrid,
   DashboardHeader,
@@ -16,7 +16,7 @@ const ExperiencePage = () => {
   );
   return (
     <div className="space-y-3">
-      <DashboardHeader title="Experience" action={<AddExperienceForm />} />
+      <DashboardHeader title="Experience" action={<ExperienceForm />} />
       <DashboardGrid isLoading={isLoading} data={experiences} variant="list">
         {experiences?.map((experience) => (
           <ExperienceCard key={experience.id} experience={experience} />

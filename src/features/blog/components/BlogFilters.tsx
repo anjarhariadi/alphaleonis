@@ -5,13 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAllPost, getCategoriesCached } from "@/features/blog/actions";
-import type { BlogPost } from "@/features/blog/dto";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function BlogFilters() {
@@ -27,49 +25,20 @@ export default function BlogFilters() {
       }),
   });
 
-  const [blogs, setBlogs] = useState<BlogPost[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const {
+    data,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["blogs", category],
+    queryFn: ({ pageParam }) => getAllPost(true, pageParam, category),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (res) => res.next_cursor ?? undefined,
+  });
 
-  useEffect(() => {
-    const fetchInitial = async () => {
-      setIsLoading(true);
-      await getAllPost(true, undefined, category)
-        .then((res) => {
-          if (res.blogs) {
-            setBlogs(res.blogs);
-            setNextCursor(res.next_cursor ?? undefined);
-            setHasMore(!!res.next_cursor);
-          }
-          if (res.error) {
-            toast.error(res.error);
-          }
-        })
-        .finally(() => setIsLoading(false));
-    };
-    (() => {
-      setBlogs([]);
-    })();
-    fetchInitial();
-  }, [category]);
-
-  const handleLoadMore = async () => {
-    if (!nextCursor) return;
-    setIsLoading(true);
-    await getAllPost(true, nextCursor, category)
-      .then((res) => {
-        if (res.blogs) {
-          setBlogs((prev) => [...prev, ...res.blogs!]);
-          setNextCursor(res.next_cursor ?? undefined);
-          setHasMore(!!res.next_cursor);
-        }
-        if (res.error) {
-          toast.error(res.error);
-        }
-      })
-      .finally(() => setIsLoading(false));
-  };
+  const blogs = data?.pages.flatMap((res) => res.blogs ?? []) ?? [];
 
   return (
     <SectionContainer>
@@ -141,11 +110,11 @@ export default function BlogFilters() {
             </div>
 
             <Button
-              onClick={handleLoadMore}
-              disabled={isLoading || !hasMore}
+              onClick={() => fetchNextPage()}
+              disabled={isFetchingNextPage || !hasNextPage}
               className="w-full"
             >
-              {isLoading ? (
+              {isFetchingNextPage ? (
                 <Loader className="animate-spin" />
               ) : (
                 <>Load Older Post</>

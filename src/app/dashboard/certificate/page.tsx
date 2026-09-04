@@ -1,7 +1,7 @@
 "use client";
 
 import CertificateCard from "@/features/certificate/component/CertificateCard";
-import AddCertificateForm from "@/features/certificate/form/AddCertificateForm";
+import { CertificateForm } from "@/features/certificate/CertificateForm";
 import {
   DashboardGrid,
   DashboardHeader,
@@ -16,7 +16,7 @@ const CertificatePage = () => {
   );
   return (
     <div className="space-y-3">
-      <DashboardHeader title="Certificate" action={<AddCertificateForm />} />
+      <DashboardHeader title="Certificate" action={<CertificateForm />} />
       <DashboardGrid isLoading={isLoading} data={certificates}>
         {certificates?.map((certificate) => (
           <CertificateCard key={certificate.id} certificate={certificate} />

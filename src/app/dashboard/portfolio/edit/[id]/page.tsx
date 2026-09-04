@@ -1,5 +1,5 @@
 "use client";
-import EditPortfolioForm from "@/features/portfolio/form/EditPortfolioForm";
+import { PortfolioForm } from "@/features/portfolio/PortfolioForm";
 import { useTRPC } from "@/trpc/react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
@@ -17,7 +17,7 @@ const EditPortfolioPage = ({ params }: { params: Promise<{ id: string }> }) => {
     <Loader className="animate-spin" />
   ) : (
     <div className="space-y-3">
-      <EditPortfolioForm id={Number(id)} defaultValues={portfolio ?? {}} />
+      <PortfolioForm id={Number(id)} defaultValues={portfolio ?? {}} />
     </div>
   );
 };

@@ -1,10 +1,9 @@
-import AddPortfolioForm from "@/features/portfolio/form/AddPortfolioForm";
-import React from "react";
+import { PortfolioForm } from "@/features/portfolio/PortfolioForm";
 
 const NewPortfolioPage = () => {
   return (
     <div>
-      <AddPortfolioForm />
+      <PortfolioForm />
     </div>
   );
 };

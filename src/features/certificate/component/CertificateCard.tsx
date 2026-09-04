@@ -9,7 +9,7 @@ import {
 import type { Certificate } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
-import EditCertificateForm from "../form/EditCertificateForm";
+import { CertificateForm } from "../CertificateForm";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -66,7 +66,7 @@ const CertificateCard = ({ certificate }: { certificate: Certificate }) => {
         )}
       </CardContent>
       <CardFooter className="gap-2">
-        <EditCertificateForm id={certificate.id} defaultValues={certificate} />
+        <CertificateForm id={certificate.id} defaultValues={certificate} />
         <Button
           disabled={deleteCertificate.isPending}
           variant="destructive"

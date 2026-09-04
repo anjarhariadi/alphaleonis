@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import type { Experience } from "@prisma/client";
 import React from "react";
-import EditExperienceForm from "../form/EditExperienceForm";
+import { ExperienceForm } from "../ExperienceForm";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTRPC } from "@/trpc/react";
@@ -45,7 +45,7 @@ const ExperienceCard = ({ experience }: { experience: Experience }) => {
             <CardDescription>{experience.company}</CardDescription>
           </div>
           <div className="flex gap-2">
-            <EditExperienceForm id={experience.id} defaultValues={experience} />
+            <ExperienceForm id={experience.id} defaultValues={experience} />
             <Button
               disabled={deleteExperience.isPending}
               variant="destructive"
