@@ -5,6 +5,13 @@ const config = {
   experimental: {
     inlineCss: true,
   },
+  turbopack: {
+    resolveAlias: {
+      "../build/polyfills/polyfill-module": "./src/lib/modern-polyfill.ts",
+      "next/dist/build/polyfills/polyfill-module":
+        "./src/lib/modern-polyfill.ts",
+    },
+  },
   images: {
     dangerouslyAllowLocalIP: true,
     remotePatterns: [
