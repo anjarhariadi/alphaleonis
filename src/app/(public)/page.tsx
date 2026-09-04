@@ -26,8 +26,6 @@ import {
 import { myAccount, myTool } from "@/features/landing/contents";
 import { ExperienceTimer } from "@/features/landing/components/ExperienceTimer";
 
-export const revalidate = 3600;
-
 export default async function Home() {
   const [me, portfolios, experiences, serverNow] = await Promise.all([
     getProfileCached(),

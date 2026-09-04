@@ -14,7 +14,9 @@ export const getCertificatesCached = cached(getCertificates, "certificates");
 
 export const getPortfolioByIdCached = requestCached(getPortfolioById);
 
-export const getCurrentTime = () => Date.now();
+export const getCurrentTime = cached(() => Date.now(), "current-time", {
+  revalidate: 60 * 60,
+});
 
 export const revalidateLandingPage = async () => {
   CACHE_TAGS.forEach((tag) => revalidateTag(tag, "max"));
