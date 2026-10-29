@@ -18,7 +18,7 @@ import {
 } from "@/features/landing/metadata";
 
 const SITE_TITLE = `${AUTHOR_NAME} – Software Engineer`;
-const METADATA_IMAGE = "/opengraph-image.png";
+const METADATA_IMAGE = "/opengraph-image.jpg";
 
 export const metadata: Metadata = {
   title: {
