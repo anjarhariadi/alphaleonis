@@ -101,7 +101,7 @@ export default async function BlogListPage({ searchParams }: Props) {
     <SectionContainer className="mb-20 max-w-4xl">
       <article className="w-full">
         <header className="mb-6">
-          <h1 className="font-sans text-5xl font-extrabold tracking-tight">
+          <h1 className="font-sans text-3xl font-extrabold tracking-tight">
             Welcome to My Blog
           </h1>
         </header>

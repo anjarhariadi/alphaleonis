@@ -31,7 +31,7 @@ function resolveSrc(slug: string, src?: string) {
 
 export function BlogMarkdown({ content, slug }: Props) {
   return (
-    <div className="space-y-4 leading-relaxed">
+    <div className="space-y-4 leading-relaxed [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath, remarkCallout]}
         rehypePlugins={[rehypeKatex]}
