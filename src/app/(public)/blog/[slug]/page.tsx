@@ -1,81 +1,48 @@
-import { getAllPostCached, getBlogPostCached } from "@/features/blog/actions";
-import { notFound } from "next/navigation";
-import { renderBlocks } from "@/components/notion/render-blocks";
-import { Separator } from "@/components/ui/separator";
+import type { Metadata } from "next";
 import Image from "next/image";
-import type { Metadata, ResolvingMetadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import SectionContainer from "@/components/section-container";
 import ShareButton from "@/components/share-button";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import SectionContainer from "@/components/section-container";
+import { Separator } from "@/components/ui/separator";
+import { BlogMarkdown } from "@/features/blog/components/BlogMarkdown";
+import { getAllPosts, getPost } from "@/features/blog/source";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
-  const { slug } = await params;
-  const content = await getBlogPostCached(slug);
-  // optionally access and extend (rather than replace) parent metadata
-  const parentMetadata = await parent;
-  const previousImages = parentMetadata.openGraph?.images || [];
+export async function generateStaticParams() {
+  const posts = await getAllPosts();
+  return posts
+    .filter((post) => post.source === "local")
+    .map((post) => ({ slug: post.slug }));
+}
 
-  if (!content)
-    return {
-      title: parentMetadata.title,
-      description: parentMetadata.description,
-    };
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) return {};
   return {
-    title: content.post?.title,
-    description: content.post?.title,
-    openGraph: {
-      images: content.post?.cover
-        ? [
-            {
-              url: content.post?.cover,
-            },
-          ]
-        : previousImages,
-    },
+    title: post.title,
+    description: post.title,
+    openGraph: post.cover ? { images: [{ url: post.cover }] } : undefined,
   };
 }
 
-export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  const blogs: { slug: string }[] = [];
-  let cursor: string | undefined = undefined;
-  do {
-    const res = await getAllPostCached(true, cursor);
-    if (res.blogs) blogs.push(...res.blogs);
-    cursor = res.next_cursor ?? undefined;
-    if (res.error) break;
-  } while (cursor);
-  return blogs.slice(0, 20).map((p) => ({ slug: p.slug }));
-}
-
-const BlogPostPage = async ({ params }: Props) => {
+export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const content = await getBlogPostCached(slug);
-  if (!content) return notFound();
-  if (!content.success)
-    return (
-      <div>
-        <h1 className="text-xl">Ooops!</h1>
-        <p>Failed to fetch blog post, try refresh the page!</p>
-      </div>
-    );
+  const post = await getPost(slug);
+  if (!post) notFound();
+
   return (
     <SectionContainer className="max-w-4xl">
-      {/* Frontmater */}
       <div className="space-y-3">
-        {content.post?.cover && (
+        {post.cover && (
           <Image
-            src={content.post.cover}
-            alt={content.post.slug}
+            src={post.cover}
+            alt={post.title}
             width={700}
             height={700}
             sizes="(max-width:768px) 100vw, 700px"
@@ -83,39 +50,27 @@ const BlogPostPage = async ({ params }: Props) => {
           />
         )}
         <span className="font-mono text-sm">
-          By {content.post?.author} • {content.post?.publishedDate}
+          By {post.author} • {post.publishedDate}
         </span>
-        <h1 className="text-primary text-2xl font-bold">
-          {content.post?.title}
-        </h1>
+        <h1 className="text-primary text-2xl font-bold">{post.title}</h1>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            {content.post?.categories.map((tag) => (
-              <Link key={tag.name} href={`/blog?category=${tag.name}`}>
-                <Badge
-                  variant="secondary"
-                  style={{
-                    backgroundColor: tag.color,
-                  }}
-                >
-                  {tag.name}
-                </Badge>
+            {post.categories.map((name) => (
+              <Link
+                key={name}
+                href={`/blog?category=${encodeURIComponent(name)}`}
+              >
+                <Badge variant="secondary">{name}</Badge>
               </Link>
             ))}
           </div>
-
           <ShareButton />
         </div>
       </div>
 
       <Separator className="my-5" />
 
-      {/* Content */}
-      <div className="w-full space-y-4">
-        {renderBlocks({ blocks: content.content })}
-      </div>
+      <BlogMarkdown content={post.content} slug={post.slug} />
     </SectionContainer>
   );
-};
-
-export default BlogPostPage;
+}

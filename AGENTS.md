@@ -12,14 +12,14 @@ This is a personal portfolio website for Anjar Hariadi built with Next.js 16, Pr
 - **Styling**: Tailwind CSS v4 with Shadcn UI components
 - **Database**: PostgreSQL via Supabase with Prisma ORM
 - **Authentication**: Supabase Auth
-- **CMS**: Notion (used as backend for blog posts)
+- **CMS**: Markdown files in `content/blog/` (no Notion)
 - **API**: tRPC
 
 ### Features
 
-- Public blog with Notion as content source
+- Public blog sourced from local Markdown files, with links to cross-posted articles
 - Public portfolio showcase
-- Protected admin dashboard for managing profile, portfolio, experience, certificates, and blog posts
+- Protected admin dashboard for managing profile, portfolio, experience, and certificates
 
 ## Build/Lint/Test Commands
 
@@ -75,7 +75,7 @@ npm run db:studio       # Open Prisma Studio
 - **Files**: kebab-case for utilities (`katex-util.ts`), PascalCase for components (`Button.tsx`)
 - **Components**: PascalCase (`DashboardSidebar`)
 - **Hooks**: camelCase with `use` prefix (`useMobile`)
-- **Utilities**: camelCase (`cn`, `extractNotionPage`)
+- **Utilities**: camelCase (`cn`, `resolveCover`)
 - **Constants**: UPPER_SNAKE_CASE for env keys, camelCase for others
 
 ### TypeScript
@@ -138,6 +138,8 @@ npm run db:studio       # Open Prisma Studio
 ### File Organization
 
 ```
+content/
+└── blog/             # Markdown posts (<slug>/index.md) + external.json
 src/
 ├── app/              # Next.js App Router pages
 │   ├── api/          # API routes
@@ -151,8 +153,7 @@ src/
 │       └── schema.ts # Zod schemas
 ├── hooks/           # Custom React hooks
 ├── lib/             # Utilities
-│   ├── supabase/    # Supabase client
-│   └── notion/      # Notion client
+│   └── supabase/    # Supabase client
 └── server/          # Server-side code
     ├── api/         # tRPC routers
     └── db.ts        # Prisma client

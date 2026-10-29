@@ -1,21 +1,13 @@
-import { getAllPostCached } from "@/features/blog/actions";
 import { SITE_URL } from "@/features/landing/metadata";
+import { getAllPosts } from "@/features/blog/source";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allBlogs: { slug: string }[] = [];
-  let cursor: string | undefined = undefined;
+  const posts = (await getAllPosts()).filter((post) => post.source === "local");
 
-  do {
-    const res = await getAllPostCached(true, cursor);
-    if (res.blogs) allBlogs.push(...res.blogs);
-    cursor = res.next_cursor ?? undefined;
-    if (res.error) break;
-  } while (cursor);
-
-  const generatedUrls: MetadataRoute.Sitemap = allBlogs.map((post) => ({
+  const generatedUrls: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${SITE_URL}/blog/${post.slug}`,
-    lastModified: new Date(),
+    lastModified: new Date(post.publishedDate),
   }));
 
   return [

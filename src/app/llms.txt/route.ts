@@ -4,7 +4,7 @@ import {
   getPortfoliosCached,
   getProfileCached,
 } from "@/features/landing/actions";
-import { getAllPost, getAllPostCached } from "@/features/blog/actions";
+import { getAllPosts } from "@/features/blog/source";
 import { SITE_URL } from "@/features/landing/metadata";
 
 export const revalidate = 3600;
@@ -25,40 +25,12 @@ export async function GET() {
   const experiences = await getExperiencesCached().catch(() => []);
   const certificates = await getCertificatesCached().catch(() => []);
 
-  // paginate all published Notion posts — try cached first, fall back to uncached on error/empty (stale negative cache)
-  const blogs: {
-    slug: string;
-    title: string;
-    categories: { name: string }[];
-    publishedDate: string;
-  }[] = [];
-  let cursor: string | undefined = undefined;
-  let guard = 0;
-  do {
-    // ponytail: 20 pages x10 = 200 posts guard
-    if (guard++ > 20) break;
-    let res = (await getAllPostCached(true, cursor).catch(
-      () => null,
-    )) as Awaited<ReturnType<typeof getAllPostCached>> | null;
-    // fallback to uncached fetch if cached is poisoned (dev incrementalCache empty, notion transient failure)
-    if (
-      !res ||
-      (res as { error?: string }).error ||
-      (!res.blogs?.length && !cursor)
-    ) {
-      const fresh = await getAllPost(true, cursor).catch(() => null);
-      if (fresh && !fresh.error && fresh.blogs) res = fresh as typeof res;
-    }
-    if (!res) break;
-    if (res.blogs) blogs.push(...(res.blogs as typeof blogs));
-    cursor = (res as { next_cursor?: string | null }).next_cursor ?? undefined;
-    if ((res as { error?: string }).error) break;
-  } while (cursor);
+  const blogs = await getAllPosts();
 
   const title = "Anjar Hariadi – Software Engineer";
   const summary = profile?.descTitle
     ? `${profile.descTitle} — ${profile.greeting ?? ""}`.trim()
-    : "Personal portfolio and blog — software engineer, portfolios, experience, certificates, and Notion-backed articles.";
+    : "Personal portfolio and blog — software engineer, portfolios, experience, certificates, and articles.";
 
   const lines: string[] = [];
 
@@ -79,7 +51,7 @@ export async function GET() {
   lines.push("## About");
   lines.push("");
   lines.push(`- [Home](${base}/): Landing, tools, contact`);
-  lines.push(`- [Blog](${base}/blog): Articles from Notion`);
+  lines.push(`- [Blog](${base}/blog): Articles and cross-posted links`);
   if (profile?.email)
     lines.push(
       `- [Contact](mailto:${profile.email}): ${mdEscape(profile.email)}`,
@@ -139,16 +111,15 @@ export async function GET() {
   lines.push("## Blog");
   lines.push("");
   if (blogs.length === 0) {
-    lines.push("- No published blog posts yet.");
+    lines.push("- No blog posts yet.");
   } else {
     for (const b of blogs) {
-      const cats = b.categories?.length
-        ? ` — ${b.categories.map((x) => x.name).join(", ")}`
-        : "";
+      const cats = b.categories.length ? ` — ${b.categories.join(", ")}` : "";
       const date = b.publishedDate ? ` (${b.publishedDate.slice(0, 10)})` : "";
-      lines.push(
-        `- [${mdEscape(b.title)}](${base}/blog/${b.slug}):${cats}${date}`,
-      );
+      const href =
+        b.source === "external" ? b.externalUrl : `${base}/blog/${b.slug}`;
+      const platform = b.platform ? ` — via ${b.platform}` : "";
+      lines.push(`- [${mdEscape(b.title)}](${href}):${cats}${date}${platform}`);
     }
   }
   lines.push("");

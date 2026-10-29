@@ -21,6 +21,9 @@ next-env.d.ts
 # production
 /build
 
+# generated blog assets
+/public/blog/
+
 # misc
 .DS_Store
 *.pem

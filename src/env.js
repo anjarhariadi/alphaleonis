@@ -6,9 +6,6 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     DIRECT_URL: z.string().min(1),
     SUPABASE_SERVICE_ROLE_KEY: z.string(),
-    NOTION_TOKEN: z.string(),
-    NOTION_BLOG_DATABASE_ID: z.string().optional(),
-    NOTION_BLOG_DATASOURCE_ID: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -23,9 +20,6 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     DIRECT_URL: process.env.DIRECT_URL,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    NOTION_TOKEN: process.env.NOTION_TOKEN,
-    NOTION_BLOG_DATABASE_ID: process.env.NOTION_BLOG_DATABASE_ID,
-    NOTION_BLOG_DATASOURCE_ID: process.env.NOTION_BLOG_DATASOURCE_ID,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,

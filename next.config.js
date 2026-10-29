@@ -5,6 +5,10 @@ const config = {
   experimental: {
     inlineCss: true,
   },
+  // /blog reads content/ at request time (category filter), so ship it with the function
+  outputFileTracingIncludes: {
+    "/*": ["./content/blog/**/*"],
+  },
   turbopack: {
     resolveAlias: {
       "../build/polyfills/polyfill-module": "./src/lib/modern-polyfill.ts",
@@ -19,22 +23,6 @@ const config = {
         protocol: "https",
         pathname: "/storage/v1/**",
         hostname: "*.supabase.co",
-      },
-      {
-        protocol: "https",
-        hostname: "*.amazonaws.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.notion.so",
-      },
-      {
-        protocol: "https",
-        hostname: "*.notionusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "prod-files-secure.s3.us-west-2.amazonaws.com",
       },
     ],
     formats: ["image/avif", "image/webp"],
